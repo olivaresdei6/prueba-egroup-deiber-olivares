@@ -97,4 +97,31 @@ export class CategoriaEntity {
         comment: "Estado de la categoría. 1: Activo, 2: Inactivo"
     })
     estado?: number;
+
+    @ApiProperty({
+        description: "Fecha de creación del registro",
+        example: "2021-01-01 00:00:00"
+    })
+    @Column({
+        type: "timestamp",
+        nullable: false,
+        default: () => 'CURRENT_TIMESTAMP',
+        name: "fecha_creacion",
+        comment: "Fecha de creación del registro. Se genera automáticamente al momento de crear el registro"
+    })
+    fechaCreacion?: Date;
+
+    @ApiProperty({
+        description: "Fecha de actualización del registro",
+        example: "2021-01-01 00:00:00"
+    })
+    @Column({
+        type: "timestamp",
+        nullable: false,
+        name: "fecha_actualizacion",
+        comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
+        default: () => 'CURRENT_TIMESTAMP',
+        onUpdate: 'CURRENT_TIMESTAMP',
+    })
+    fechaActualizacion?: Date;
 }
