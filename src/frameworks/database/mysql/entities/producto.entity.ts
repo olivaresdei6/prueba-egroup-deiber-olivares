@@ -301,7 +301,8 @@ export class ProductoEntity {
     @OneToMany(() => ImageProductoEntity, imageProducto => imageProducto.producto)
     imagesProducto?: ImageProductoEntity[];
 
-    @ManyToOne(() => TipoProductoEntity, tipoProducto => tipoProducto.id, {eager: true})
+    @ManyToOne(() => TipoProductoEntity,
+            tipoProducto => tipoProducto.id, {eager: true})
     @JoinColumn({name: "id_tipo_de_producto"})
     producto: number | TipoProductoEntity;
 

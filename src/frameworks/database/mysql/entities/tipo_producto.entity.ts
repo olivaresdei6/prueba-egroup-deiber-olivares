@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { generateUUID } from "../../../../helper/generateUUID";
 import { ProductoEntity } from "./producto.entity";
+import { CategoriaTipoProductoEntity } from "./categoria_tipo_producto.entity";
 
 @Entity({name: "tipo_de_producto"})
 export class TipoProductoEntity {
@@ -99,5 +100,11 @@ export class TipoProductoEntity {
 
     @OneToMany(() => ProductoEntity, producto => producto.producto)
     productos: ProductoEntity[];
+
+    @OneToMany (()=> CategoriaTipoProductoEntity,
+        categoriaTipoProducto =>
+            categoriaTipoProducto.tipoProducto
+    )
+    categoriasTipoProductos: CategoriaTipoProductoEntity[];
 
 }

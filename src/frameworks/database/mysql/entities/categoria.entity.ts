@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { generateUUID } from "../../../../helper/generateUUID";
+import { CategoriaTipoProductoEntity } from "./categoria_tipo_producto.entity";
 
 @Entity({name: "categoria"})
 export class CategoriaEntity {
@@ -124,4 +125,10 @@ export class CategoriaEntity {
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
+
+    @OneToMany(()=>CategoriaTipoProductoEntity,
+        categoriaTipoProducto =>
+            categoriaTipoProducto.categoria
+    )
+    categoriasTipoProductos?: CategoriaTipoProductoEntity[];
 }

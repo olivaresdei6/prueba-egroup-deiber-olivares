@@ -179,6 +179,6 @@ export class ImagenEntity {
     })
     estado?: number;
 
-    @OneToMany(() => ImageProductoEntity, imagenProduct => imagenProduct.idImagen)
+    @OneToMany(() => ImageProductoEntity, imagenProduct => imagenProduct.imagen)
     productosImagenes?: ImageProductoEntity[];
 }
