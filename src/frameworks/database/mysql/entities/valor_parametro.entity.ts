@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { generateUUID } from "../../../../helper/generateUUID";
+import { ParametroEntity } from "./parametro.entity";
 
 /**
  * Entidad que representa la tabla valor_parametro. Esta tabla representa los valores que se pueden configurar en la aplicación. Ejemplo: colores: #FFFFFF, #000000, #FF0000, etc.
@@ -126,5 +127,6 @@ export class ValorParametroEntity {
             eager: true // Cuando se consulte un valor parámetro, se traerá el parámetro al que pertenece
         }
     )
-    idParametro!: number;
+    @JoinColumn({name: "id_parametro"})
+    parametro!: number | ParametroEntity;
 }

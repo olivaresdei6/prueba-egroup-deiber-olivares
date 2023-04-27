@@ -1,7 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { generateUUID } from "../../../../helper/generateUUID";
 import { ImageProductoEntity } from "./imagen_producto.entity";
+import { TipoProductoEntity } from "./tipo_producto.entity";
 
 @Entity({name: "producto"})
 export class ProductoEntity {
@@ -54,12 +55,6 @@ export class ProductoEntity {
         example: "TERMO",
         description: "Tipo de producto",
         uniqueItems: true
-    })
-    @Column({
-        type: "number",
-        nullable: false,
-        name: "id_tipo_producto",
-        comment: "Tipo de producto: TERMO, Reloj, etc"
     })
     idTipoProducto!: number;
 
@@ -303,6 +298,11 @@ export class ProductoEntity {
     })
     fechaActualizacion?: Date;
 
-    @OneToMany(() => ImageProductoEntity, imageProducto => imageProducto.idProducto)
+    @OneToMany(() => ImageProductoEntity, imageProducto => imageProducto.producto)
     imagesProducto?: ImageProductoEntity[];
+
+    @ManyToOne(() => TipoProductoEntity, tipoProducto => tipoProducto.id, {eager: true})
+    @JoinColumn({name: "id_tipo_de_producto"})
+    producto: number | TipoProductoEntity;
+
 }

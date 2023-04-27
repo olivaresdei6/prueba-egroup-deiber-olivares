@@ -123,7 +123,7 @@ export class ParametroEntity {
       */
     @OneToMany(
         () => ValorParametroEntity,
-        (valorParametro) => valorParametro.idParametro,
+        (valorParametro) => valorParametro.parametro,
     )
     valoresParametro?: ValorParametroEntity[];
 }

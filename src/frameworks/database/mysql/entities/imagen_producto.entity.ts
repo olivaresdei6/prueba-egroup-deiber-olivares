@@ -7,6 +7,7 @@ import {
 import { ApiProduces, ApiProperty } from "@nestjs/swagger";
 import { generateUUID } from "../../../../helper/generateUUID";
 import { ProductoEntity } from "./producto.entity";
+import { ImagenEntity } from "./imagen.entity";
 
 @Entity({name: 'imagen_producto'})
 export class ImageProductoEntity {
@@ -39,9 +40,9 @@ export class ImageProductoEntity {
         example: 1,
         nullable: false
     })
-    @ManyToOne(() => ImageEntity, image => image.id, {eager: true, nullable: false})
+    @ManyToOne(() => ImagenEntity, image => image.id, {eager: true, nullable: false})
     @JoinColumn({name: 'id_producto'})
-    idImagen?: number;
+    imagen?: number | ImagenEntity;
 
     @ApiProperty({
         example: 2,
@@ -50,7 +51,7 @@ export class ImageProductoEntity {
     })
     @ManyToOne(() => ProductoEntity, producto => producto.id, {eager: true, nullable: false})
     @JoinColumn({name: 'id_producto'})
-    idProducto?: number;
+    producto?: number | ProductoEntity;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
