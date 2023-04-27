@@ -1,6 +1,6 @@
 export * from './parametro.entity';
 export * from './valor_parametro.entity';
-export * from './';
+export * from './categoria.entity';
 export * from './';
 export * from './';
 export * from './';

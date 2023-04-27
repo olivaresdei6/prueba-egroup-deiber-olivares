@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { v4 as uuidv4 } from "uuid";
+import { generateUUID } from "../../../../helper/generateUUID";
 
 /**
  * Entidad que representa la tabla valor_parametro. Esta tabla representa los valores que se pueden configurar en la aplicación. Ejemplo: colores: #FFFFFF, #000000, #FF0000, etc.
@@ -15,15 +15,15 @@ export class ValorParametroEntity {
     })
     @PrimaryGeneratedColumn({
         name: "id",
-        type: "bigint",
+        type: "int",
         unsigned: true,
         comment: "Identificador del valor parámetro"
     })
-    id: number;
+    id?: number;
 
     @ApiProperty({
         description: "UUID del valor parámetro",
-        example: uuidv4(),
+        example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
         uniqueItems: true
     })
     @Column({
@@ -32,9 +32,10 @@ export class ValorParametroEntity {
         unique: true,
         length: 36,
         name: "uuid",
-        comment: "UUID del valor parámetro. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
+        comment: "UUID del valor parámetro. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible",
+        default: () => `${generateUUID()}`
     })
-    uuid: string;
+    uuid?: string;
 
 
     @ApiProperty({
@@ -46,11 +47,11 @@ export class ValorParametroEntity {
         type: "varchar",
         nullable: false,
         unique: true,
-        length: 50,
+        length: 100,
         name: "nombre",
         comment: "Nombre del valor parámetro. Son como las opciones que se pueden seleccionar en un select. Ejemplo: colores: #FFFFFF, #000000, #FF0000, etc. Un valor parametro es como si fuera una fila de una tabla. Se agrupan tablas que tienen un comportamiento similar y campos similares para evitar la creación de tablas innecesarias y se relacionan con la tabla parametro"
     })
-    nombre: string;
+    nombre!: string;
 
     @ApiProperty({
         description: "Descripción del valor parámetro",
@@ -58,13 +59,12 @@ export class ValorParametroEntity {
     })
     @Column({
         type: "varchar",
+        length: 500,
         nullable: true,
-        unique: true,
-        length: 100,
         name: "descripcion",
         comment: "Descripción del parámetro. Se utiliza para describir el parámetro y su funcionalidad. No es obligatorio, pero se recomienda llenar este campo para facilitar la comprensión de la funcionalidad del parámetro"
     })
-    descripcion: string;
+    descripcion?: string;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -73,10 +73,11 @@ export class ValorParametroEntity {
     @Column({
         type: "timestamp",
         nullable: false,
+        default: () => 'CURRENT_TIMESTAMP',
         name: "fecha_creacion",
         comment: "Fecha de creación del registro. Se genera automáticamente al momento de crear el registro"
     })
-    fechaCreacion: Date;
+    fechaCreacion?: Date;
 
     @ApiProperty({
         description: "Fecha de actualización del registro",
@@ -86,9 +87,11 @@ export class ValorParametroEntity {
         type: "timestamp",
         nullable: false,
         name: "fecha_actualizacion",
-        comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro"
+        comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
+        default: () => 'CURRENT_TIMESTAMP',
+        onUpdate: 'CURRENT_TIMESTAMP',
     })
-    fechaActualizacion: Date;
+    fechaActualizacion?: Date;
 
     @ApiProperty({
         description: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado",
@@ -100,7 +103,7 @@ export class ValorParametroEntity {
         name: "estado",
         comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado"
     })
-    estado: number;
+    estado?: number;
 
 
     /**
@@ -123,5 +126,5 @@ export class ValorParametroEntity {
             eager: true // Cuando se consulte un valor parámetro, se traerá el parámetro al que pertenece
         }
     )
-    idParametro: number;
+    idParametro!: number;
 }

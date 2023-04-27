@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { v4 as uuidv4 } from "uuid";
 import { ValorParametroEntity } from "./";
+import { generateUUID } from "../../../../helper/generateUUID";
 
 /**
  * Entidad que representa la tabla parametro. Esta tabla representa los parámetros que se pueden configurar en la aplicación. Ejemplo: colores, tipos de documento, tipos de usuario, etc.
@@ -16,15 +16,15 @@ export class ParametroEntity {
     })
     @PrimaryGeneratedColumn({
         name: "id",
-        type: "bigint",
+        type: "int",
         unsigned: true,
         comment: "Identificador del parámetro"
     })
-    id: number;
+    id?: number;
 
     @ApiProperty({
         description: "UUID del parámetro",
-        example: uuidv4(),
+        example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
         uniqueItems: true
     })
     @Column({
@@ -33,9 +33,10 @@ export class ParametroEntity {
         unique: true,
         length: 36,
         name: "uuid",
+        default: () => `${generateUUID()}`,
         comment: "UUID del parámetro. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
-    uuid: string;
+    uuid?: string;
 
 
     @ApiProperty({
@@ -51,7 +52,7 @@ export class ParametroEntity {
         name: "nombre",
         comment: "Nombre del parámetro. Un parámetro puede ser: colores, tipos de documento, tipos de usuario, etc. Se agrupan tablas que tienen un comportamiento similar y campos similares para evitar la creación de tablas innecesarias"
     })
-    nombre: string;
+    nombre!: string;
 
     @ApiProperty({
         description: "Descripción del parámetro",
@@ -61,11 +62,11 @@ export class ParametroEntity {
     @Column({
         type: "varchar",
         nullable: true,
-        length: 100,
+        length: 500,
         name: "descripcion",
         comment: "Descripción del parámetro. Se utiliza para describir el parámetro y su funcionalidad. No es obligatorio, pero se recomienda llenar este campo para facilitar la comprensión de la funcionalidad del parámetro"
     })
-    descripcion: string;
+    descripcion?: string;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -74,10 +75,11 @@ export class ParametroEntity {
     @Column({
         type: "timestamp",
         nullable: false,
+        default: () => 'CURRENT_TIMESTAMP',
         name: "fecha_creacion",
         comment: "Fecha de creación del registro. Se genera automáticamente al momento de crear el registro"
     })
-    fechaCreacion: Date;
+    fechaCreacion?: Date;
 
     @ApiProperty({
         description: "Fecha de actualización del registro",
@@ -87,9 +89,11 @@ export class ParametroEntity {
         type: "timestamp",
         nullable: false,
         name: "fecha_actualizacion",
-        comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro"
+        comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
+        default: () => 'CURRENT_TIMESTAMP',
+        onUpdate: 'CURRENT_TIMESTAMP',
     })
-    fechaActualizacion: Date;
+    fechaActualizacion?: Date;
 
     @ApiProperty({
         description: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado",
@@ -101,7 +105,7 @@ export class ParametroEntity {
         name: "estado",
         comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado"
     })
-    estado: number;
+    estado?: number;
 
     /**
      * Relacione de uno a muchos con la tabla valor_parametro. Un parámetro puede tener muchos valores, pero un valor solo puede pertenecer a un parámetro
@@ -121,5 +125,5 @@ export class ParametroEntity {
         () => ValorParametroEntity,
         (valorParametro) => valorParametro.idParametro,
     )
-    valoresParametro: ValorParametroEntity[];
+    valoresParametro?: ValorParametroEntity[];
 }
