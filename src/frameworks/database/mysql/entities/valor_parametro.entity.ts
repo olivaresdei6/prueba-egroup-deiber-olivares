@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
-import { ParametroEntity } from "./parametro.entity";
+import { ParametroEntity } from "./";
 
 /**
  * Entidad que representa la tabla valor_parametro. Esta tabla representa los valores que se pueden configurar en la aplicación. Ejemplo: colores: #FFFFFF, #000000, #FF0000, etc.
@@ -14,8 +13,7 @@ export class ValorParametroEntity {
         description: "Identificador del valor parámetro",
         uniqueItems: true
     })
-    @PrimaryGeneratedColumn({
-        name: "id",
+    @PrimaryGeneratedColumn('increment',{
         type: "int",
         unsigned: true,
         comment: "Identificador del valor parámetro"
@@ -32,9 +30,7 @@ export class ValorParametroEntity {
         nullable: false,
         unique: true,
         length: 36,
-        name: "uuid",
         comment: "UUID del valor parámetro. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible",
-        default: () => `${generateUUID()}`
     })
     uuid?: string;
 
@@ -48,7 +44,7 @@ export class ValorParametroEntity {
         type: "varchar",
         nullable: false,
         unique: true,
-        length: 100,
+        length: 200,
         name: "nombre",
         comment: "Nombre del valor parámetro. Son como las opciones que se pueden seleccionar en un select. Ejemplo: colores: #FFFFFF, #000000, #FF0000, etc. Un valor parametro es como si fuera una fila de una tabla. Se agrupan tablas que tienen un comportamiento similar y campos similares para evitar la creación de tablas innecesarias y se relacionan con la tabla parametro"
     })
@@ -66,6 +62,18 @@ export class ValorParametroEntity {
         comment: "Descripción del parámetro. Se utiliza para describir el parámetro y su funcionalidad. No es obligatorio, pero se recomienda llenar este campo para facilitar la comprensión de la funcionalidad del parámetro"
     })
     descripcion?: string;
+
+    @ApiProperty({
+        example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
+        description: 'Observaciones del valor parámetro',
+        nullable: true
+    })
+    @Column('varchar', {
+        nullable: true,
+        comment: 'Observaciones de la valor parámetro',
+        length: 500,
+    })
+    observacion?: string;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -107,21 +115,13 @@ export class ValorParametroEntity {
     estado?: number;
 
 
-    /**
-     * Relacion de muchos a uno con la tabla parametro. Es decir, muchos valores parámetro pueden tener un mismo parámetro
-     * o lo que es lo mismo, un parámetro puede tener muchos valores parámetro pero un valor parámetro solo puede tener un parámetro.
-     * En terminos mas simples, un valor parámetro pertenece a un parámetro, es como si a la tabla de colores se le agregara una fila
-     * con los datos: id: 1, uuid: uuidv4(), nombre: "#FFFFFF", descripcion: "Color blanco", fechaCreacion: "2021-01-01 00:00:00",
-     * pero para ahorrar espacio en la base de datos, se crea una tabla de valores parámetro y se relaciona con la tabla de parámetros,
-     * reduciando de forma considerable la creación de tablas innecesarias y que además tienen muy pocos datos.
-     */
     @ApiProperty({
         description: "Identificador del parámetro",
         example: 1
     })
     @ManyToOne(
-        () => ValorParametroEntity,
-        valorParametro => valorParametro.id,
+        () => ParametroEntity,
+        parametro => parametro.id,
         {
             nullable: false,
             eager: true // Cuando se consulte un valor parámetro, se traerá el parámetro al que pertenece

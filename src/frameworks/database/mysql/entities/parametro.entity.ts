@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { ValorParametroEntity } from "./";
-import { generateUUID } from "../../../../helper/generateUUID";
 
 /**
  * Entidad que representa la tabla parametro. Esta tabla representa los parámetros que se pueden configurar en la aplicación. Ejemplo: colores, tipos de documento, tipos de usuario, etc.
@@ -32,8 +31,6 @@ export class ParametroEntity {
         nullable: false,
         unique: true,
         length: 36,
-        name: "uuid",
-        default: () => `${generateUUID()}`,
         comment: "UUID del parámetro. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
@@ -48,7 +45,7 @@ export class ParametroEntity {
         type: "varchar",
         nullable: false,
         unique: true,
-        length: 50,
+        length: 200,
         name: "nombre",
         comment: "Nombre del parámetro. Un parámetro puede ser: colores, tipos de documento, tipos de usuario, etc. Se agrupan tablas que tienen un comportamiento similar y campos similares para evitar la creación de tablas innecesarias"
     })
@@ -107,20 +104,6 @@ export class ParametroEntity {
     })
     estado?: number;
 
-    /**
-     * Relacione de uno a muchos con la tabla valor_parametro. Un parámetro puede tener muchos valores, pero un valor solo puede pertenecer a un parámetro
-     * Esta relación se realiza a través del campo idParametro en la tabla valor_parametro.
-     *
-     * Este tipo de tabla se utiliza para almacenar los valores de los parámetros. Por ejemplo, si el parámetro es colores, los valores pueden ser: rojo, azul, verde, etc.
-     * Es decir, tablas que tienen un comportamiento similar, campos similares y muy pocos datos.
-     * Por ejemplo, si se creara una tabla para cada parámetro, se tendrían las siguientes tablas:
-     *  - colores -> cuando mucho 20 registros
-     *  - tipos_documento -> cuando mucho 10 registros
-     *  - tipos_usuario -> cuando mucho 8 registros
-     *  - tipos_producto -> cuando mucho 3 registros
-     *  Por lo tanto, se recomienda crear una tabla para agrupar todos estos parámetros y sus valores en una sola tabla llamada valor_parametro
-     *  y aplicarle una relación de uno a muchos con esta tabla.
-      */
     @OneToMany(
         () => ValorParametroEntity,
         (valorParametro) => valorParametro.parametro,

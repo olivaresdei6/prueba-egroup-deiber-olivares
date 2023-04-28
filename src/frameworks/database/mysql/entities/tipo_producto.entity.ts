@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
 import { ProductoEntity } from "./producto.entity";
 import { CategoriaTipoProductoEntity } from "./categoria_tipo_producto.entity";
 
@@ -11,7 +10,7 @@ export class TipoProductoEntity {
         example: 1,
         description: 'Identificador de esta tabla'
     })
-    @PrimaryGeneratedColumn({type: 'int', unsigned: true, zerofill: true})
+    @PrimaryGeneratedColumn({type: 'smallint', unsigned: true, zerofill: true})
     id: number;
 
     @ApiProperty({
@@ -24,8 +23,6 @@ export class TipoProductoEntity {
         nullable: false,
         unique: true,
         length: 36,
-        name: "uuid",
-        default: () => `${generateUUID()}`,
         comment: "UUID del tipo de producto. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
@@ -39,7 +36,7 @@ export class TipoProductoEntity {
         type: "varchar",
         nullable: false,
         unique: true,
-        length: 100,
+        length: 200,
         name: "nombre",
         comment: "Nombre del tipos de producto que existen en la base de datos."
     })

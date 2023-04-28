@@ -1,0 +1,18 @@
+# Se especifica la versión de docker-compose
+version: '3'
+
+# Se indican los servicios que se van a utilizar
+services:
+    db_develop:
+        image: mysql:8.0.33
+        container_name: database_prueba_e-group
+        restart: always
+        ports:
+            - "3309:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+            MYSQL_DATABASE: ${DATABASE_NAME}
+            MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+volumes:
+    mysql-db:
+        external: false

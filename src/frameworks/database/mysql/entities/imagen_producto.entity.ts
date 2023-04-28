@@ -4,10 +4,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn
 } from "typeorm";
-import { ApiProduces, ApiProperty } from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
-import { ProductoEntity } from "./producto.entity";
-import { ImagenEntity } from "./imagen.entity";
+import { ApiProperty } from "@nestjs/swagger";
+import { ProductoEntity, ImagenEntity } from "./";
 
 @Entity({name: 'imagen_producto'})
 export class ImageProductoEntity {
@@ -16,7 +14,7 @@ export class ImageProductoEntity {
         description: 'Id de la imagen',
         nullable: false,
     })
-    @PrimaryGeneratedColumn({name: 'id', type: 'bigint', unsigned: true})
+    @PrimaryGeneratedColumn({type: 'bigint', unsigned: true})
     id?: number;
 
     @ApiProperty({
@@ -30,7 +28,6 @@ export class ImageProductoEntity {
         length: 36,
         nullable: false,
         unique: true,
-        default: () => `${generateUUID()}`,
         comment: 'UUID de la imagen.  Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible'
     })
     uuid?: string;
@@ -41,7 +38,7 @@ export class ImageProductoEntity {
         nullable: false
     })
     @ManyToOne(() => ImagenEntity, image => image.id, {eager: true, nullable: false})
-    @JoinColumn({name: 'id_producto'})
+    @JoinColumn({name: 'id_imagen'})
     imagen?: number | ImagenEntity;
 
     @ApiProperty({
@@ -50,7 +47,7 @@ export class ImageProductoEntity {
         nullable: false
     })
     @ManyToOne(() => ProductoEntity, producto => producto.id, {eager: true, nullable: false})
-    @JoinColumn({name: 'id_producto'})
+    @JoinColumn({name: 'id_producto_'})
     producto?: number | ProductoEntity;
 
     @ApiProperty({

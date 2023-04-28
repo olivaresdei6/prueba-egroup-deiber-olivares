@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
 import { ImageProductoEntity } from "./imagen_producto.entity";
 import { TipoProductoEntity } from "./tipo_producto.entity";
+import { InventarioEntity } from "./inventario.entity";
 
 @Entity({name: "producto"})
 export class ProductoEntity {
@@ -13,7 +13,7 @@ export class ProductoEntity {
     })
     @PrimaryGeneratedColumn({
         name: "id",
-        type: "bigint",
+        type: "int",
         unsigned: true,
         comment: "Identificador de cada producto"
     })
@@ -29,8 +29,6 @@ export class ProductoEntity {
         nullable: false,
         unique: true,
         length: 36,
-        name: "uuid",
-        default: () => `${generateUUID()}`,
         comment: "UUID del producto. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
@@ -45,7 +43,7 @@ export class ProductoEntity {
         type: "varchar",
         nullable: false,
         unique: true,
-        length: 50,
+        length: 200,
         name: "nombre",
         comment: "Nombre del producto: TERMO BUNJIE 1L, TERMO BUNJIE 2L, etc"
     })
@@ -56,6 +54,12 @@ export class ProductoEntity {
         description: "Tipo de producto",
         uniqueItems: true
     })
+    @Column({
+        type: "int",
+        nullable: false,
+        name: "id_tipo_producto",
+        comment: "Tipo de producto: TERMO, BOTELLA, etc"
+    })
     idTipoProducto!: number;
 
     @ApiProperty({
@@ -63,7 +67,7 @@ export class ProductoEntity {
         description: "Tipo de usuario",
     })
     @Column({
-        type: "number",
+        type: "int",
         nullable: false,
         name: "id_tipo_usuario",
         comment: "Tipo de usuario: Damas, Caballeros y Niños"
@@ -96,7 +100,6 @@ export class ProductoEntity {
         precision: 10,
         // Scale es la cantidad de decimales, 2 quiere decir que se pueden guardar 2 decimales
         scale: 2,
-        name: "ancho",
         comment: "Ancho del producto"
     })
     ancho!: number;
@@ -137,7 +140,7 @@ export class ProductoEntity {
         nullable: true,
     })
     @Column({
-        type: "number",
+        type: "int",
         nullable: true,
         name: "id_color",
         comment: "Color del producto"
@@ -150,7 +153,7 @@ export class ProductoEntity {
         nullable: true,
     })
     @Column({
-        type: "number",
+        type: "int",
         nullable: true,
         name: "id_material",
         comment: "Material del producto"
@@ -263,7 +266,7 @@ export class ProductoEntity {
         default: 1,
     })
     @Column({
-        type: "tinyint",
+        type: "int",
         nullable: false,
         default: 1,
         name: "estado",
@@ -305,5 +308,10 @@ export class ProductoEntity {
             tipoProducto => tipoProducto.id, {eager: true})
     @JoinColumn({name: "id_tipo_de_producto"})
     producto: number | TipoProductoEntity;
+
+    @OneToMany(() => InventarioEntity, inventario => inventario.producto)
+    inventario?: InventarioEntity[];
+
+
 
 }

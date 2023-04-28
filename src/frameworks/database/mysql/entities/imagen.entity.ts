@@ -1,12 +1,11 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
-import { ImageProductoEntity } from "./imagen_producto.entity";
+import { ImageProductoEntity } from "./";
 
 @Entity({name: 'imagen'})
 export class ImagenEntity {
     @ApiProperty({
-        example: '1',
+        example: 1,
         description: 'Id de la imagen',
         nullable: false,
     })
@@ -24,7 +23,6 @@ export class ImagenEntity {
         length: 36,
         nullable: false,
         unique: true,
-        default: () => `${generateUUID()}`,
         comment: 'UUID de la imagen.  Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible'
     })
     uuid?: string;
@@ -64,12 +62,12 @@ export class ImagenEntity {
     })
     @Column({
         type: 'varchar',
-        length: 255,
+        length: 500,
         nullable: true,
         name: 'descripcion',
         comment: 'Descripción de la imagen'
     })
-    description?: string;
+    descripcion?: string;
 
     @ApiProperty({
         example: 'https://storage.googleapis.com/ecommerce-9n6bc.appspot.com/images/9n6bc-9n6bc-9n6bc-9n6bc-9n6bc.png',
@@ -93,7 +91,6 @@ export class ImagenEntity {
     @Column({
         type: 'bigint',
         nullable: false,
-        name: 'size',
         comment: 'Tamaño de la imagen en bytes'
     })
     size!: number
@@ -120,7 +117,6 @@ export class ImagenEntity {
     @Column({
         type: 'bigint',
         nullable: false,
-        name: 'ancho',
         comment: 'Ancho de la imagen en pixeles'
     })
     ancho!: number;
@@ -133,10 +129,9 @@ export class ImagenEntity {
     @Column({
         type: 'bigint',
         nullable: false,
-        name: 'alto',
         comment: 'Alto de la imagen en pixeles'
     })
-    height!: number;
+    altura!: number;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -171,7 +166,7 @@ export class ImagenEntity {
         nullable: false
     })
     @Column({
-        type: 'tinyint',
+        type: 'int',
         nullable: false,
         name: 'estado',
         comment: 'Estado del registro. 0: Inactivo, 1: Activo',

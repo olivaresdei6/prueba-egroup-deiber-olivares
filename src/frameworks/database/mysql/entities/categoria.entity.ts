@@ -1,6 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
 import { CategoriaTipoProductoEntity } from "./categoria_tipo_producto.entity";
 
 @Entity({name: "categoria"})
@@ -8,11 +7,9 @@ export class CategoriaEntity {
     @ApiProperty({
         example: 1,
         description: 'Identificador de la categoría',
-        type: 'number',
     })
     @PrimaryGeneratedColumn({
-        name: "id",
-        type: "bigint",
+        type: "smallint",
         unsigned: true,
         comment: "Identificador de la categoría",
     })
@@ -34,7 +31,6 @@ export class CategoriaEntity {
         unique: true,
         length: 36,
         name: "uuid",
-        default: () => `${generateUUID()}`,
         comment: "UUID del categoria. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
@@ -49,7 +45,7 @@ export class CategoriaEntity {
         type: "varchar",
         nullable: false,
         unique: true,
-        length: 50,
+        length: 200,
         name: "nombre",
         comment: "Nombre de la categoría: Ropa, Accesorios, etc."
     })
@@ -91,10 +87,9 @@ export class CategoriaEntity {
         default: 1,
     })
     @Column({
-        type: "tinyint",
+        type: "int",
         nullable: false,
         default: 1,
-        name: "estado",
         comment: "Estado de la categoría. 1: Activo, 2: Inactivo"
     })
     estado?: number;

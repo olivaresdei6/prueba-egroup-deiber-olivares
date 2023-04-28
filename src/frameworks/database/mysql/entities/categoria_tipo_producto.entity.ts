@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
-import { generateUUID } from "../../../../helper/generateUUID";
 import { TipoProductoEntity } from "./tipo_producto.entity";
 import { CategoriaEntity } from "./categoria.entity";
 
@@ -12,7 +11,11 @@ export class CategoriaTipoProductoEntity {
         type: "number",
         example: 1
     })
-    @PrimaryGeneratedColumn({ type: "int" })
+    @PrimaryGeneratedColumn('increment', {
+        type: "smallint",
+        unsigned: true,
+        comment: "Identificador de la asociación entre categoria y tipo de producto"
+    })
     id: number;
 
     @ApiProperty({
@@ -25,10 +28,37 @@ export class CategoriaTipoProductoEntity {
         length: 36,
         nullable: false,
         unique: true,
-        default: () => `${generateUUID()}`,
         comment: "UUID de la imagen.  Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
+
+    @ApiProperty({
+        description: "Descripción de la categoría",
+        example: "Accesorios para todo tipo de ocasión",
+        uniqueItems: true
+    })
+    @Column({
+        type: "varchar",
+        nullable: true,
+        length: 500,
+        name: "descripcion",
+        comment: "Descripción de la asociación entre categoria y tipo de producto. Se puede dejar vacío"
+    })
+    descripcion?: string;
+
+    @ApiProperty({
+        description: "Observación de la asociación entre categoria y tipo de producto",
+        example: "Los termos pertenecen a la categoría de accesorios y a la categoría de cocina",
+        nullable: true,
+    })
+    @Column({
+        type: "varchar",
+        nullable: true,
+        length: 500,
+        name: "observacion",
+        comment: "Observación de la asociación. Se puede dejar vacío"
+    })
+    observacion?: string;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
