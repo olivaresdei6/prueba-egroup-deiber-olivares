@@ -130,7 +130,7 @@ export class DireccionEntity {
 
     @ApiProperty({
         example: 1,
-        description: 'Identificador único de la ciudad',
+        description: 'Identificador único de la ciudad.abstract.ts',
     })
     @ManyToOne(() => CiudadEntity, ciudad => ciudad.id)
     @JoinColumn({name: "id_ciudad"})

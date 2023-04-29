@@ -16,12 +16,12 @@ export class CiudadEntity {
 
     @ApiProperty({
         example: 1,
-        description: 'Identificador único de cada ciudad',
+        description: 'Identificador único de cada ciudad.abstract.ts',
         uniqueItems: true
     })
     @PrimaryGeneratedColumn('increment', {
         type: 'smallint',
-        comment: 'Identificador único de cada ciudad'
+        comment: 'Identificador único de cada ciudad.abstract.ts'
     })
     id?: number;
     
@@ -35,13 +35,13 @@ export class CiudadEntity {
         nullable: false,
         unique: true,
         length: 36,
-        comment: "UUID de la ciudad. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
+        comment: "UUID de la ciudad.abstract.ts. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
 
     @ApiProperty({
         example: "Bogotá",
-        description: "Nombre de la ciudad",
+        description: "Nombre de la ciudad.abstract.ts",
         uniqueItems: true
     })
     @Column({
@@ -49,29 +49,29 @@ export class CiudadEntity {
         nullable: false,
         unique: true,
         length: 200,
-        comment: "Nombre de la ciudad. Ejemplo: Bogotá"
+        comment: "Nombre de la ciudad.abstract.ts. Ejemplo: Bogotá"
     })
     nombre!: string;
 
     @ApiProperty({
         example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
-        description: 'Observaciones de la ciudad',
+        description: 'Observaciones de la ciudad.abstract.ts',
         nullable: true
     })
     @Column('text', {
         nullable: true,
-        comment: 'Observaciones de la ciudad',
+        comment: 'Observaciones de la ciudad.abstract.ts',
     })
     observacion?: string;
 
     @ApiProperty({
         example: 1,
-        description: 'Estado de la ciudad (1: Activo, 0: Inactivo)',
+        description: 'Estado de la ciudad.abstract.ts (1: Activo, 0: Inactivo)',
     })
     @Column('int', {
         default: 1,
         nullable: false,
-        comment: 'Estado de la ciudad (1: Activo, 0: Inactivo)'
+        comment: 'Estado de la ciudad.abstract.ts (1: Activo, 0: Inactivo)'
     })
     estado?: number;
 
@@ -111,7 +111,7 @@ export class CiudadEntity {
     
     @ApiProperty({
         example: 1,
-        description: 'Identificador único del departamento al que pertenece la ciudad',
+        description: 'Identificador único del departamento al que pertenece la ciudad.abstract.ts',
     })
     @ManyToOne(() => DepartamentoEntity, departamento => departamento.id, {nullable: false, eager: true})
     @JoinColumn({name: 'id_departamento'})

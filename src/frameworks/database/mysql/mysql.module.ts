@@ -4,6 +4,8 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import * as entities from './entities';
 import {envConfiguration} from "../../../config/env.config";
 import { ExceptionsModule } from '../../../config/exceptions/exceptions.module';
+import { IConexionDb } from "./core/abstract";
+import { MySQLBaseDeDatosService } from "./mysql.service";
 
 @Module({
 	imports: [
@@ -24,12 +26,8 @@ import { ExceptionsModule } from '../../../config/exceptions/exceptions.module';
 					/* autoLoadEntities sirve para que no sea necesario importar las entidades en el archivo app.module.ts */
 					autoLoadEntities: true,
 					entities: Object.values(entities),
-					migrations: ['dist/database/migrations/*.js'],
-					subscribers: ['dist/observers/subscribers/*.subscriber.js'],
 					cli: {
-						entitiesDir: 'src/modules/**/entity',
-						migrationsDir: 'src/database/migrations',
-						subscribersDir: 'src/observers/subscribers',
+						entitiesDir: 'src/frameworks/database/mysql/entities',
 					},
 				};
 			},
@@ -37,5 +35,12 @@ import { ExceptionsModule } from '../../../config/exceptions/exceptions.module';
 		TypeOrmModule.forFeature(Object.values(entities)),
 		ExceptionsModule
 	],
+	providers: [
+		{
+			provide: IConexionDb,
+			useClass: MySQLBaseDeDatosService,
+		}
+	],
+	exports: [IConexionDb]
 })
 export class MySQLDatabaseModule {}
