@@ -8,6 +8,7 @@ import { ConfigModule } from "@nestjs/config";
 import { envConfiguration } from "./config/env.config";
 import { JoiValidationSchema } from "./config/joi.validation";
 import { PermisoModuloModule } from "./modules/permiso_modulo/permiso_modulo.module";
+import { PermisoParametroModule } from "./modules/permiso_parametro/permiso_parametro.module";
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { PermisoModuloModule } from "./modules/permiso_modulo/permiso_modulo.mod
       MySQLDatabaseModule,
       ParametroModule,
       ValorParametroModule,
-      PermisoModuloModule
+      PermisoModuloModule,
+      PermisoParametroModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -115,7 +115,12 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
 
         // Agregamos la opción de búsqueda si se proporcionó.
         if (busqueda && campo) {
-            queryBuilder.where(`${campo} LIKE :busqueda`, { busqueda: `%${busqueda}%` });
+            // Se comprueba si busqueda es un numero o un string.
+            if(typeof busqueda === 'number') {
+                queryBuilder.where(`${campo} = ${busqueda}`);
+            }else {
+                queryBuilder.where(`${campo} LIKE :busqueda`, { busqueda: `%${busqueda}%` });
+            }
         }
 
         // Agregamos la condición si se proporcionó.

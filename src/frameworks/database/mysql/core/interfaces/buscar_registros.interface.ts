@@ -2,7 +2,7 @@
 export interface BuscarRegistrosInterface {
     limite: number,
     pagina: number,
-    busqueda?: string,
+    busqueda?: string | number,
     campo?: string,
     condicion?: string
 }

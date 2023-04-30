@@ -33,7 +33,7 @@ export class PermisoParametroEntity {
     
     
     @ApiProperty({
-        description: 'Nombre del parámetro',
+        description: 'Nombre del parámetro de ruta',
         example: 'id',
         required: true
     })
@@ -41,7 +41,7 @@ export class PermisoParametroEntity {
         length: 200,
         nullable: false,
         unique: true,
-        comment: 'Nombre del parámetro'
+        comment: 'Nombre del parámetro de ruta'
     })
     nombre!: string;
     
@@ -62,26 +62,25 @@ export class PermisoParametroEntity {
     
     @ApiProperty({
         description: 'Tipo de dato del parámetro',
-        example: 'string',
+        example: 1,
         required: true,
     })
-    @Column('varchar', {
-        length: 200,
+    @Column('int', {
         nullable: false,
-        comment: 'Tipo de dato del parámetro',
-        name: 'tipo_de_dato'
+        comment: 'Id del tipo de dato del parámetro',
+        name: 'id_tipo_de_dato'
     })
-    tipoDeDato!: string;
+    tipoDeDato!: number;
     
     @ApiProperty({
-        description: 'Descripción del parámetro',
-        example: 'Descripción del parámetro',
+        description: 'Descripción del tipo de dato del parámetro',
+        example: 'Descripción del tipo de dato del parámetro',
         required: false,
     })
     @Column('varchar', {
         length: 500,
         nullable: true,
-        comment: 'Descripción del parámetro',
+        comment: 'Descripción del tipo de dato del parámetro',
     })
     descripcion?: string;
 
@@ -117,10 +116,9 @@ export class PermisoParametroEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -130,7 +128,7 @@ export class PermisoParametroEntity {
         example: 1,
         description: 'Estado del parametro (1: Activo, 0: Inactivo)',
     })
-    @Column('tinyint', {
+    @Column('int', {
         default: 1,
         nullable: false,
         comment: 'Estado del parametro (1: Activo, 0: Inactivo)'
