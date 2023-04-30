@@ -53,7 +53,7 @@ export class UsuarioEntity {
         comment: 'Código único de autenticación de cada usuario. Se debe generar un código al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible',
         name: 'codigo_autenticacion'
     })
-    codigoAutenticacion?: string;
+    codigoAutenticacion!: string;
 
     @ApiProperty({
         example: 'Juan',
@@ -64,7 +64,7 @@ export class UsuarioEntity {
         nullable: false,
         length: 500,
     })
-    nombres!: string;
+    nombre!: string;
 
     @ApiProperty({
         example: 'Perez',
@@ -76,19 +76,7 @@ export class UsuarioEntity {
         length: 100,
         default: ''
     })
-    apellidos!: string;
-
-    @ApiProperty({
-        example: 1,
-        description: 'Género del usuario',
-        nullable: false,
-    })
-    @Column('int', {
-        nullable: false,
-        name: 'id_genero',
-        comment: 'Género del usuario. Se debe obtener de la tabla de valores parámetros',
-    })
-    idGenero!: number;
+    apellido!: string;
 
 
     @ApiProperty({
@@ -159,10 +147,9 @@ export class UsuarioEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;

@@ -12,6 +12,7 @@ import { PermisoParametroModule } from "./modules/permiso_parametro/permiso_para
 import { PermisoRutaModule } from "./modules/permiso_ruta/permiso_ruta.module";
 import { PermisoRolModule } from "./modules/permiso_rol/permiso_rol.module";
 import { PermisoModule } from "./modules/permiso/permiso.module";
+import { UsuarioModule } from "./modules/usuario/usuario.module";
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { PermisoModule } from "./modules/permiso/permiso.module";
       PermisoParametroModule,
       PermisoRutaModule,
       PermisoRolModule,
-      PermisoModule
+      PermisoModule,
+      UsuarioModule
   ],
   controllers: [AppController],
   providers: [AppService],
