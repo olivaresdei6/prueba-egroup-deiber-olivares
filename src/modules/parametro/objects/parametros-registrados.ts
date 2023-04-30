@@ -4,4 +4,5 @@ export const parametrosRegistrados = {
     tiposDeSexo: 'tipos de sexo',
     tiposDeEstadoCivil: 'tipos de estado civil',
     colores: 'colores',
+    metodosHttp: 'metodos http',
 }

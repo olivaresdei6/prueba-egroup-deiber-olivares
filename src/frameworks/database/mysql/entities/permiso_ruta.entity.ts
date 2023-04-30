@@ -11,7 +11,7 @@ import {
 } from "./index";
 
 @Entity({name: 'permiso_ruta'})
-@Index(['ruta', 'nombre', 'idMetodoHttp'], {unique: true})
+@Index(['ruta', 'nombre', 'metodoHttp'], {unique: true})
 export class PermisoRutaEntity {
     @ApiProperty({
         example: 1,
@@ -65,7 +65,7 @@ export class PermisoRutaEntity {
         default: '',
         comment: 'Ubicación de la ruta'
     })
-    ruta!: string;
+    ruta?: string;
 
     @ApiProperty({
         description: 'Método de la acción. Ejemplo: GET, POST, PUT, DELETE. Cada uno tiene un valor en la tabla valor para su identificación',
@@ -78,7 +78,7 @@ export class PermisoRutaEntity {
         name: 'id_metodo_http',
         comment: 'Método de la acción. Hesto hace referencia a la tabla valor para los métodos de las acciones',
     })
-    idMetodoHttp!: number;
+    metodoHttp!: number;
 
     @ApiProperty({
         description: 'Descripción de la ruta',
@@ -124,10 +124,9 @@ export class PermisoRutaEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;

@@ -9,6 +9,7 @@ import { envConfiguration } from "./config/env.config";
 import { JoiValidationSchema } from "./config/joi.validation";
 import { PermisoModuloModule } from "./modules/permiso_modulo/permiso_modulo.module";
 import { PermisoParametroModule } from "./modules/permiso_parametro/permiso_parametro.module";
+import { PermisoRutaModule } from "./modules/permiso_ruta/permiso_ruta.module";
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { PermisoParametroModule } from "./modules/permiso_parametro/permiso_para
       ParametroModule,
       ValorParametroModule,
       PermisoModuloModule,
-      PermisoParametroModule
+      PermisoParametroModule,
+      PermisoRutaModule
   ],
   controllers: [AppController],
   providers: [AppService],
