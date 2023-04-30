@@ -10,6 +10,7 @@ import { JoiValidationSchema } from "./config/joi.validation";
 import { PermisoModuloModule } from "./modules/permiso_modulo/permiso_modulo.module";
 import { PermisoParametroModule } from "./modules/permiso_parametro/permiso_parametro.module";
 import { PermisoRutaModule } from "./modules/permiso_ruta/permiso_ruta.module";
+import { PermisoRolModule } from "./modules/permiso_rol/permiso_rol.module";
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { PermisoRutaModule } from "./modules/permiso_ruta/permiso_ruta.module";
       ValorParametroModule,
       PermisoModuloModule,
       PermisoParametroModule,
-      PermisoRutaModule
+      PermisoRutaModule,
+      PermisoRolModule
   ],
   controllers: [AppController],
   providers: [AppService],

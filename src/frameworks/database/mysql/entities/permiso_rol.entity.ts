@@ -88,10 +88,9 @@ export class PermisoRolEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -100,7 +99,7 @@ export class PermisoRolEntity {
         example: 1,
         description: 'Estado del rol (1: Activo, 0: Inactivo)',
     })
-    @Column('tinyint', {
+    @Column('int', {
         default: 1,
         nullable: false,
         comment: 'Estado del rol (1: Activo, 0: Inactivo)'

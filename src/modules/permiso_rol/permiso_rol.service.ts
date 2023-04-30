@@ -1,0 +1,51 @@
+import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { CrearPermisoRolDto } from "./dto/crear-permiso-rol.dto";
+import { ActualizarPermisoRolDto } from "./dto/actualizar-permiso-rol.dto";
+import { PermisoRolEntity } from "../../frameworks/database/mysql/entities";
+
+@Injectable()
+export class PermisoRolService {
+    constructor( private readonly servicioDeBaseDeDatos: IConexionDb) {}
+
+    async crearRegistro(crearPermisoRolDto: CrearPermisoRolDto)  {
+        const permisoRol =  await this.servicioDeBaseDeDatos.permisoRol.crearRegistro(crearPermisoRolDto);
+        if (permisoRol) {
+            return {
+                status: 201,
+                message: 'Rol creado correctamente',
+            }
+        }
+    }
+
+    async obtenerTodosLosRegistros(): Promise<PermisoRolEntity[]> {
+        return await this.servicioDeBaseDeDatos.permisoRol.obtenerRegistros();
+    }
+
+    async obtenerRegistrosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
+        const camposPermitidos = [ 'nombre', 'descripcion', 'observacion'];
+        if (campo && !camposPermitidos.includes(campo.toLowerCase())) {
+            throw new BadRequestException('El campo enviado no es permitido.');
+        }
+        if (busqueda && campo) {
+            return await this.servicioDeBaseDeDatos.permisoRol.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
+        }else {
+            return await this.servicioDeBaseDeDatos.permisoRol.obtenerRegistrosPaginados({limite, pagina});
+        }
+    }
+
+    async obtenerUnRegistro(uuid: string): Promise<PermisoRolEntity> {
+        return await this.servicioDeBaseDeDatos.permisoRol.obtenerUnRegistroPor({where: {uuid}}, 'Rol');
+    }
+
+    async actualizarRegistro(uuid: string, actualizarPermisoRolDto: ActualizarPermisoRolDto)  {
+        const rol = await this.servicioDeBaseDeDatos.permisoRol.actualizarRegistro(uuid, actualizarPermisoRolDto);
+        if (rol) {
+            return {
+                status: 201,
+                message: 'Rol actualizado correctamente',
+            }
+        }
+    }
+
+}
