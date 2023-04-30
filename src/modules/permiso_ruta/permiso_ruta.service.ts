@@ -3,6 +3,9 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { CrearPermisoRutaDto } from "./dto/crear-permiso-ruta.dto";
 import { ActualizarPermisoRutaDto } from "./dto/actualizar-permiso-ruta.dto";
 import { parametrosRegistrados } from "../parametro/objects/parametros-registrados";
+import { CrearRelacionRutaParametroDto } from "./dto/crear-relacion-ruta-parametro.dto";
+import { ActualizarRelacionRutaParametroDto } from "./dto/actualizar-relacion-ruta-parametro.dto";
+import { isValidUuid } from "../../helper/validateUUID";
 
 @Injectable()
 export class PermisoRutaService {
@@ -24,6 +27,20 @@ export class PermisoRutaService {
         }
     }
 
+    async crearRelacionRutaParametro( crearRelacionRutaParametroDto:CrearRelacionRutaParametroDto){
+        const {permisoRuta} = await this.obtenerUnRegistro(crearRelacionRutaParametroDto.uuidRuta);
+        const permisoParametro = await this.obtenerParametroPorUuid(crearRelacionRutaParametroDto.uuidParametro);
+        if(permisoRuta && permisoParametro){
+            const relacionRutaParametro = await this.servicioDeBaseDeDatos.permisoParametroRuta.crearRegistro({ruta: permisoRuta.id, parametro: permisoParametro.id});
+            if(relacionRutaParametro){
+                return {
+                    status: 201,
+                    message: 'Relacion Ruta - Parametro creada correctamente',
+                }
+            }
+        }
+    }
+
     async obtenerTodosLosRegistros() {
        const rutas = await this.servicioDeBaseDeDatos.permisoRuta.obtenerRegistros();
         return await Promise.all(rutas.map(async (parametroDeRuta) => {
@@ -35,6 +52,10 @@ export class PermisoRutaService {
                metodoHttp
            }
        }));
+    }
+
+    async obtenerTodasLasRelacionesRutaParametro() {
+        return await this.servicioDeBaseDeDatos.permisoParametroRuta.obtenerRegistros();
     }
 
     async obtenerRegistrosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
@@ -63,6 +84,10 @@ export class PermisoRutaService {
         }
     }
 
+    async obtenerRelacionRutaParametro(uuid: string) {
+        return await this.servicioDeBaseDeDatos.permisoParametroRuta.obtenerUnRegistroPor({where: {uuid}}, 'Relacion Ruta Parametro');
+    }
+
     async actualizarRegistro(uuid: string, actualizarPermisoRutaDto: ActualizarPermisoRutaDto)  {
         let  permisoRuta;
         if (actualizarPermisoRutaDto.uuidMetodoHttp) {
@@ -82,8 +107,55 @@ export class PermisoRutaService {
         }
     }
 
+    async actualizarRelacionRutaParametro(uuid: string, actualizarRelacionRutaParametroDto: ActualizarRelacionRutaParametroDto) {
+        const {uuidRuta, uuidParametro, observacion, descripcion} = actualizarRelacionRutaParametroDto;
+        if (uuidParametro) {
+            const permisoParametro = await this.obtenerParametroPorUuid(uuidParametro);
+            await this.servicioDeBaseDeDatos.permisoParametroRuta.actualizarRegistro(uuid, {
+                parametro: permisoParametro.id, observacion, descripcion
+            });
+        }
+
+        if (uuidRuta) {
+            const permisoRuta = await this.obtenerUnRegistro(uuidRuta);
+            await this.servicioDeBaseDeDatos.permisoParametroRuta.actualizarRegistro(uuid, {
+                ruta: permisoRuta.permisoRuta.id, observacion, descripcion
+            });
+        }
+
+        else if (uuidParametro && uuidRuta) {
+            const permisoParametro = await this.obtenerParametroPorUuid(uuidParametro);
+            const permisoRuta = await this.obtenerUnRegistro(uuidRuta);
+            if(permisoParametro && permisoRuta){
+                const relacionRutaParametro = await this.servicioDeBaseDeDatos.permisoParametroRuta.actualizarRegistro(uuid, {
+                    ruta: permisoRuta.permisoRuta.id, parametro: permisoParametro.id, observacion, descripcion
+                });
+                if(relacionRutaParametro){
+                    return {
+                        status: 201,
+                        message: 'Relacion Ruta - Parametro actualizada correctamente',
+                    }
+                }
+            }
+        }
+
+        else {
+            await this.servicioDeBaseDeDatos.permisoParametroRuta.actualizarRegistro(uuid, {observacion, descripcion});
+        }
+
+        return {
+            status: 201,
+            message: 'Relacion Ruta - Parametro actualizada correctamente',
+        }
+    }
+
     private obtenerValorParametroPorUuid(uuid: string) {
         return this.servicioDeBaseDeDatos.valorParametro.obtenerUnRegistroPor({ where: { uuid } }, 'Valor Parametro');
     }
+
+    private obtenerParametroPorUuid(uuid: string) {
+        return this.servicioDeBaseDeDatos.permisoParametro.obtenerUnRegistroPor({ where: { uuid } }, 'Ruta')
+    }
+
 
 }

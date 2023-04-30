@@ -45,7 +45,7 @@ export class PermisoParametroRutaEntity {
     @Column('varchar', {
         length: 500,
         nullable: true,
-        comment: 'Observacion de la relación entre la ruta y el parámetro',
+        comment: 'Descripcion de la relación entre la ruta y el parámetro',
     })
     descripcion?: string;
 
@@ -81,10 +81,9 @@ export class PermisoParametroRutaEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -100,11 +99,18 @@ export class PermisoParametroRutaEntity {
     })
     estado?: number;
 
-
+    @ApiProperty({
+        example: 1,
+        description: 'Identificador único de la ruta',
+    })
     @ManyToOne(() => PermisoRutaEntity, permisoRuta => permisoRuta.id, { nullable: false, eager: true })
     @JoinColumn({name: 'id_ruta'})
     ruta!: number | PermisoRutaEntity
-    
+
+    @ApiProperty({
+        example: 1,
+        description: 'Identificador único del parámetro',
+    })
     @ManyToOne(() => PermisoParametroEntity, permisoParametro => permisoParametro.id, { nullable: false, eager: true })
     @JoinColumn({name: 'id_route_parameter'})
     parametro!: number | PermisoParametroEntity
