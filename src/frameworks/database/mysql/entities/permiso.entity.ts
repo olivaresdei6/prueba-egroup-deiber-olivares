@@ -12,8 +12,8 @@ import {
     PermisoRutaEntity,
 } from "./index";
 
-@Entity({name: 'permiso_rol_modulo_ruta'})
-export class PermisoRolModuloRutaEntity {
+@Entity({name: 'permiso'})
+export class PermisoEntity {
     @ApiProperty({
         example: 1,
         description: 'Identificador único de cada asociación de rol, acción y módulo',
@@ -85,10 +85,9 @@ export class PermisoRolModuloRutaEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -104,10 +103,6 @@ export class PermisoRolModuloRutaEntity {
         comment: 'Estado de la asociación (1: Activo, 0: Inactivo)'
     })
     estado?: number;
-    
-    /**
-     * Relaciones de la tabla de asociación de rol y acción
-     */
     
     @ManyToOne(() => PermisoRolEntity, permisoRolEntity => permisoRolEntity.id, { nullable: false, eager: true })
     @JoinColumn({name: 'id_rol'})

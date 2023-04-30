@@ -17,7 +17,7 @@ export * from './mysql.permiso_modulo.repository';
 export * from './mysql.permiso_parametro.repository';
 export * from './mysql.permiso_parametro_ruta.repository';
 export * from './mysql.permiso_rol.repository';
-export * from './mysql.permiso_rol_modulo_ruta.repository';
+export * from './mysql.permiso.repository';
 export * from './mysql.permiso_ruta.repository';
 export * from './mysql.precio.repository';
 export * from './mysql.producto.repository';

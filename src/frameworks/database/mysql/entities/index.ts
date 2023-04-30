@@ -17,7 +17,7 @@ export * from './permiso_modulo.entity';
 export * from './permiso_parametro.entity';
 export * from './permiso_parametro_ruta.entity';
 export * from './permiso_rol.entity';
-export * from './permiso_rol_modulo_ruta.entity';
+export * from './permiso.entity';
 export * from './permiso_ruta.entity';
 export * from './precio.entity';
 export * from './producto.entity';

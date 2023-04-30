@@ -1,7 +1,7 @@
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 
 import {ApiProperty} from "@nestjs/swagger";
-import { PermisoRolModuloRutaEntity, UsuarioEntity } from "./index";
+import { PermisoEntity, UsuarioEntity } from "./index";
 
 @Entity({name: 'permiso_rol'})
 export class PermisoRolEntity {
@@ -113,6 +113,6 @@ export class PermisoRolEntity {
     @OneToMany(() => UsuarioEntity, usuario => usuario.rol)
     rolesUsuario?: UsuarioEntity[];
     
-    @OneToMany(() => PermisoRolModuloRutaEntity, PermisoRolModuloRuta => PermisoRolModuloRuta.rol)
-    permisoRolesModuloRuta?: PermisoRolModuloRutaEntity[];
+    @OneToMany(() => PermisoEntity, PermisoRolModuloRuta => PermisoRolModuloRuta.rol)
+    permisos?: PermisoEntity[];
 }

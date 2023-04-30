@@ -17,7 +17,7 @@ export * from './permiso_modulo.abstract';
 export * from './permiso_parametro.abstract';
 export * from './permiso_parametro_ruta.abstract';
 export * from './permiso_rol.abstract';
-export * from './permiso_rol_modulo_ruta.abstract';
+export * from './permiso.abstract';
 export * from './permiso_ruta.abstract';
 export * from './precio.abstract';
 export * from './producto.abstract';

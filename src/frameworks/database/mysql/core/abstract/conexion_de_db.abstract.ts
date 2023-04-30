@@ -21,7 +21,7 @@ export abstract class IConexionDb {
     public abstract permisoParametro: abstract.IPermisoParametroRepository<entidades.PermisoParametroEntity>;
     public abstract permisoParametroRuta: abstract.IPermisoParametroRutaRepository<entidades.PermisoParametroRutaEntity>;
     public abstract permisoRol: abstract.IPermisoRolRepository<entidades.PermisoRolEntity>;
-    public abstract permisoRolModuloRuta: abstract.IPermisoRolModuloRutaRepository<entidades.PermisoRolModuloRutaEntity>;
+    public abstract permiso: abstract.IPermisoRepository<entidades.PermisoEntity>;
     public abstract permisoRuta: abstract.IPermisoRutaRepository<entidades.PermisoRutaEntity>;
     public abstract precio: abstract.IPrecioRepository<entidades.PrecioEntity>;
     public abstract producto: abstract.IProductoRepository<entidades.ProductoEntity>;

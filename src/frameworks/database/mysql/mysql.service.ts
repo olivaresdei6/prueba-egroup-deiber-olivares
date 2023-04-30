@@ -25,7 +25,7 @@ export class MySQLBaseDeDatosService implements abstract.IConexionDb{
     public permisoParametro: abstract.IPermisoParametroRepository<entidades.PermisoParametroEntity>;
     public permisoParametroRuta: abstract.IPermisoParametroRutaRepository<entidades.PermisoParametroRutaEntity>;
     public permisoRol: abstract.IPermisoRolRepository<entidades.PermisoRolEntity>;
-    public permisoRolModuloRuta: abstract.IPermisoRolModuloRutaRepository<entidades.PermisoRolModuloRutaEntity>;
+    public permiso: abstract.IPermisoRepository<entidades.PermisoEntity>;
     public permisoRuta: abstract.IPermisoRutaRepository<entidades.PermisoRutaEntity>;
     public precio: abstract.IPrecioRepository<entidades.PrecioEntity>;
     public producto: abstract.IProductoRepository<entidades.ProductoEntity>;
@@ -56,7 +56,7 @@ export class MySQLBaseDeDatosService implements abstract.IConexionDb{
         @InjectRepository(entidades.PermisoParametroEntity) private readonly permisoParametroRepository: Repository<entidades.PermisoParametroEntity>,
         @InjectRepository(entidades.PermisoParametroRutaEntity) private readonly permisoParametroRutaRepository: Repository<entidades.PermisoParametroRutaEntity>,
         @InjectRepository(entidades.PermisoRolEntity) private readonly permisoRolRepository: Repository<entidades.PermisoRolEntity>,
-        @InjectRepository(entidades.PermisoRolModuloRutaEntity) private readonly permisoRolModuloRutaRepository: Repository<entidades.PermisoRolModuloRutaEntity>,
+        @InjectRepository(entidades.PermisoEntity) private readonly permisoRolModuloRutaRepository: Repository<entidades.PermisoEntity>,
         @InjectRepository(entidades.PermisoRutaEntity) private readonly permisoRutaRepository: Repository<entidades.PermisoRutaEntity>,
         @InjectRepository(entidades.PrecioEntity) private readonly precioRepository: Repository<entidades.PrecioEntity>,
         @InjectRepository(entidades.ProductoEntity) private readonly productoRepository: Repository<entidades.ProductoEntity>,
@@ -89,7 +89,7 @@ export class MySQLBaseDeDatosService implements abstract.IConexionDb{
         this.permisoParametro = new repositorios.MySQLPermisoParametroRepository(this.permisoParametroRepository, this.conexion);
         this.permisoParametroRuta = new repositorios.MySQLPermisoParametroRutaRepository(this.permisoParametroRutaRepository, this.conexion);
         this.permisoRol = new repositorios.MySQLPermisoRolRepository(this.permisoRolRepository, this.conexion);
-        this.permisoRolModuloRuta = new repositorios.MySQLPermisoRolModuloRutaRepository(this.permisoRolModuloRutaRepository, this.conexion);
+        this.permiso = new repositorios.MySQLPermisoRepository(this.permisoRolModuloRutaRepository, this.conexion);
         this.permisoRuta = new repositorios.MySQLPermisoRutaRepository(this.permisoRutaRepository, this.conexion);
         this.precio = new repositorios.MySQLPrecioRepository(this.precioRepository, this.conexion);
         this.producto = new repositorios.MySQLProductoRepository(this.productoRepository, this.conexion);
