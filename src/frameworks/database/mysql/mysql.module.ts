@@ -3,7 +3,6 @@ import {ConfigModule, ConfigService} from '@nestjs/config';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import * as entities from './entities';
 import {envConfiguration} from "../../../config/env.config";
-import { ExceptionsModule } from '../../../config/exceptions/exceptions.module';
 import { IConexionDb } from "./core/abstract";
 import { MySQLBaseDeDatosService } from "./mysql.service";
 
@@ -21,6 +20,8 @@ import { MySQLBaseDeDatosService } from "./mysql.service";
 					password: envConfiguration().databasePassword,
 					database: envConfiguration().databaseName,
 					synchronize: true,
+					// Cambiar la zona horaria a la de Colombia
+					timezone: "-05:00",
 					/* Logging sirve para ver las consultas que se hacen a la base de datos */
 					//logging: true,
 					/* autoLoadEntities sirve para que no sea necesario importar las entidades en el archivo app.module.ts */
@@ -33,7 +34,6 @@ import { MySQLBaseDeDatosService } from "./mysql.service";
 			},
 		}),
 		TypeOrmModule.forFeature(Object.values(entities)),
-		ExceptionsModule
 	],
 	providers: [
 		{

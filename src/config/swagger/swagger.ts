@@ -5,8 +5,8 @@ import {envConfiguration} from "../env.config";
 export class SwaggerConfig {
 	static ConfigSwaggerModule(app: INestApplication): void {
 		const config = new DocumentBuilder()
-			.setTitle("Prueba CUC - Deiber Olivares RESTFull API")
-			.setDescription("API RESTFull para la gestion de cursos, grupos, docentes y estudiantes.")
+			.setTitle("Prueba E-GROUP -- Desarrollador: Deiber Duban Olivares Olivares")
+			.setDescription("API RESTFull dedicada a la gestion de una tienda de productos")
 			.setVersion("v1.0.0")
 			.build();
 		const document = SwaggerModule.createDocument(app, config);

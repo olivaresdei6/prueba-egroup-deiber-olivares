@@ -110,7 +110,8 @@ export class ValorParametroEntity {
         type: "int",
         nullable: false,
         name: "estado",
-        comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado"
+        comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado",
+        default: 1
     })
     estado?: number;
 

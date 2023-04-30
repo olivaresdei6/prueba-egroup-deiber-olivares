@@ -16,9 +16,9 @@ import {ConfigService} from "@nestjs/config";
 import {AllExceptionFilter} from "./config/filters";
 import {SwaggerConfig} from "./config/swagger/swagger";
 import {envConfiguration} from "./config/env.config";
-import { LoggingInterceptor } from './config/iterceptors/loggers';
-import { ResponseInterceptor } from './config/iterceptors/response';
-import { TimeoutInterceptor } from './config/iterceptors/timeout';
+import { LoggingInterceptor } from './config/iterceptors/loggers.interceptor';
+import { ResponseInterceptor } from './config/iterceptors/response.interceptor';
+import { TimeoutInterceptor } from './config/iterceptors/timeout.interceptor';
 
 async function main() {
   const logger = new LoggerService();

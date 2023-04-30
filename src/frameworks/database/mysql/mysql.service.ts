@@ -4,7 +4,6 @@ import * as entidades from "./entities";
 import * as repositorios from "./repositories";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataSource, Repository } from "typeorm";
-import { ExceptionsService } from "../../../config/exceptions/exceptions.service";
 @Injectable()
 export class MySQLBaseDeDatosService implements abstract.IConexionDb{
     public categoria: abstract.ICategoriaRepository<entidades.CategoriaEntity>;
@@ -68,39 +67,38 @@ export class MySQLBaseDeDatosService implements abstract.IConexionDb{
         @InjectRepository(entidades.ValorParametroEntity) private readonly valorParametroRepository: Repository<entidades.ValorParametroEntity>,
         @InjectRepository(entidades.VentaEntity) private readonly ventaRepository: Repository<entidades.VentaEntity>,
         private readonly conexion: DataSource,
-        private readonly servicioDeExecepciones: ExceptionsService,
     ){}
 
-    public async iniciarTransaccion(){
-        this.categoria = new repositorios.MySQLCategoriaRepository(this.categoriaRepository, this.conexion, this.servicioDeExecepciones);
-        this.categoriaTipoProducto = new repositorios.MySQLCategoriaTipoProductoRepository(this.categoriaTipoProductoRepository, this.conexion, this.servicioDeExecepciones);
-        this.ciudad = new repositorios.MySQLCiudadRepository(this.ciudadRepository, this.conexion, this.servicioDeExecepciones);
-        this.compra = new repositorios.MySQLCompraRepository(this.compraRepository, this.conexion, this.servicioDeExecepciones);
-        this.cupon = new repositorios.MySQLCuponRepository(this.cuponRepository, this.conexion, this.servicioDeExecepciones);
-        this.departamento = new repositorios.MySQLDepartamentoRepository(this.departamentoRepository, this.conexion, this.servicioDeExecepciones);
-        this.detalleCompra = new repositorios.MySQLDetalleCompraRepository(this.detalleCompraRepository, this.conexion, this.servicioDeExecepciones);
-        this.detalleVenta = new repositorios.MySQLDetalleVentaRepository(this.detalleVentaRepository, this.conexion, this.servicioDeExecepciones);
-        this.direccion = new repositorios.MySQLDireccionRepository(this.direccionRepository, this.conexion, this.servicioDeExecepciones);
-        this.imagen = new repositorios.MySQLImagenRepository(this.imagenRepository, this.conexion, this.servicioDeExecepciones);
-        this.imagenProducto = new repositorios.MySQLImagenProductoRepository(this.imagenProductoRepository, this.conexion, this.servicioDeExecepciones);
-        this.inventario = new repositorios.MySQLInventarioRepository(this.inventarioRepository, this.conexion, this.servicioDeExecepciones);
-        this.inventarioProducto = new repositorios.MySQLInventarioProductoRepository(this.inventarioProductoRepository, this.conexion, this.servicioDeExecepciones);
-        this.pais = new repositorios.MySQLPaisRepository(this.paisRepository, this.conexion, this.servicioDeExecepciones);
-        this.parametro = new repositorios.MySQLParametroRepository(this.parametroRepository, this.conexion, this.servicioDeExecepciones);
-        this.permisoModulo = new repositorios.MySQLPermisoModuloRepository(this.permisoModuloRepository, this.conexion, this.servicioDeExecepciones);
-        this.permisoParametro = new repositorios.MySQLPermisoParametroRepository(this.permisoParametroRepository, this.conexion, this.servicioDeExecepciones);
-        this.permisoParametroRuta = new repositorios.MySQLPermisoParametroRutaRepository(this.permisoParametroRutaRepository, this.conexion, this.servicioDeExecepciones);
-        this.permisoRol = new repositorios.MySQLPermisoRolRepository(this.permisoRolRepository, this.conexion, this.servicioDeExecepciones);
-        this.permisoRolModuloRuta = new repositorios.MySQLPermisoRolModuloRutaRepository(this.permisoRolModuloRutaRepository, this.conexion, this.servicioDeExecepciones);
-        this.permisoRuta = new repositorios.MySQLPermisoRutaRepository(this.permisoRutaRepository, this.conexion, this.servicioDeExecepciones);
-        this.precio = new repositorios.MySQLPrecioRepository(this.precioRepository, this.conexion, this.servicioDeExecepciones);
-        this.producto = new repositorios.MySQLProductoRepository(this.productoRepository, this.conexion, this.servicioDeExecepciones);
-        this.proovedor = new repositorios.MySQLProovedorRepository(this.proovedorRepository, this.conexion, this.servicioDeExecepciones);
-        this.registroDeAcceso = new repositorios.MySQLRegistroDeAccesoRepository(this.registroDeAccesoRepository, this.conexion, this.servicioDeExecepciones);
-        this.tipoProducto = new repositorios.MySQLTipoProductoRepository(this.tipoProductoRepository, this.conexion, this.servicioDeExecepciones);
-        this.usuario = new repositorios.MySQLUsuarioRepository(this.usuarioRepository, this.conexion, this.servicioDeExecepciones);
-        this.valorParametro = new repositorios.MySQLValorParametroRepository(this.valorParametroRepository, this.conexion, this.servicioDeExecepciones);
-        this.venta = new repositorios.MySQLVentaRepository(this.ventaRepository, this.conexion, this.servicioDeExecepciones);
+    public async onApplicationBootstrap(){
+        this.categoria = new repositorios.MySQLCategoriaRepository(this.categoriaRepository, this.conexion);
+        this.categoriaTipoProducto = new repositorios.MySQLCategoriaTipoProductoRepository(this.categoriaTipoProductoRepository, this.conexion);
+        this.ciudad = new repositorios.MySQLCiudadRepository(this.ciudadRepository, this.conexion);
+        this.compra = new repositorios.MySQLCompraRepository(this.compraRepository, this.conexion);
+        this.cupon = new repositorios.MySQLCuponRepository(this.cuponRepository, this.conexion);
+        this.departamento = new repositorios.MySQLDepartamentoRepository(this.departamentoRepository, this.conexion);
+        this.detalleCompra = new repositorios.MySQLDetalleCompraRepository(this.detalleCompraRepository, this.conexion);
+        this.detalleVenta = new repositorios.MySQLDetalleVentaRepository(this.detalleVentaRepository, this.conexion);
+        this.direccion = new repositorios.MySQLDireccionRepository(this.direccionRepository, this.conexion);
+        this.imagen = new repositorios.MySQLImagenRepository(this.imagenRepository, this.conexion);
+        this.imagenProducto = new repositorios.MySQLImagenProductoRepository(this.imagenProductoRepository, this.conexion);
+        this.inventario = new repositorios.MySQLInventarioRepository(this.inventarioRepository, this.conexion);
+        this.inventarioProducto = new repositorios.MySQLInventarioProductoRepository(this.inventarioProductoRepository, this.conexion);
+        this.pais = new repositorios.MySQLPaisRepository(this.paisRepository, this.conexion);
+        this.parametro = new repositorios.MySQLParametroRepository(this.parametroRepository, this.conexion);
+        this.permisoModulo = new repositorios.MySQLPermisoModuloRepository(this.permisoModuloRepository, this.conexion);
+        this.permisoParametro = new repositorios.MySQLPermisoParametroRepository(this.permisoParametroRepository, this.conexion);
+        this.permisoParametroRuta = new repositorios.MySQLPermisoParametroRutaRepository(this.permisoParametroRutaRepository, this.conexion);
+        this.permisoRol = new repositorios.MySQLPermisoRolRepository(this.permisoRolRepository, this.conexion);
+        this.permisoRolModuloRuta = new repositorios.MySQLPermisoRolModuloRutaRepository(this.permisoRolModuloRutaRepository, this.conexion);
+        this.permisoRuta = new repositorios.MySQLPermisoRutaRepository(this.permisoRutaRepository, this.conexion);
+        this.precio = new repositorios.MySQLPrecioRepository(this.precioRepository, this.conexion);
+        this.producto = new repositorios.MySQLProductoRepository(this.productoRepository, this.conexion);
+        this.proovedor = new repositorios.MySQLProovedorRepository(this.proovedorRepository, this.conexion);
+        this.registroDeAcceso = new repositorios.MySQLRegistroDeAccesoRepository(this.registroDeAccesoRepository, this.conexion);
+        this.tipoProducto = new repositorios.MySQLTipoProductoRepository(this.tipoProductoRepository, this.conexion);
+        this.usuario = new repositorios.MySQLUsuarioRepository(this.usuarioRepository, this.conexion);
+        this.valorParametro = new repositorios.MySQLValorParametroRepository(this.valorParametroRepository, this.conexion);
+        this.venta = new repositorios.MySQLVentaRepository(this.ventaRepository, this.conexion);
     }
 
 }

@@ -1,6 +1,6 @@
-export interface RespuestaPaginadaInterface {
+export interface RespuestaPaginadaInterface<T> {
     cantidadTotalDeRegistros: number;
     paginasTotales: number,
     paginaActual: number,
-    registrosPaginados: Object[];
+    registrosPaginados: T[];
 }

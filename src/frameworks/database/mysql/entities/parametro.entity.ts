@@ -46,7 +46,6 @@ export class ParametroEntity {
         nullable: false,
         unique: true,
         length: 200,
-        name: "nombre",
         comment: "Nombre del parámetro. Un parámetro puede ser: colores, tipos de documento, tipos de usuario, etc. Se agrupan tablas que tienen un comportamiento similar y campos similares para evitar la creación de tablas innecesarias"
     })
     nombre!: string;
@@ -60,10 +59,23 @@ export class ParametroEntity {
         type: "varchar",
         nullable: true,
         length: 500,
-        name: "descripcion",
         comment: "Descripción del parámetro. Se utiliza para describir el parámetro y su funcionalidad. No es obligatorio, pero se recomienda llenar este campo para facilitar la comprensión de la funcionalidad del parámetro"
     })
     descripcion?: string;
+
+    @ApiProperty({
+        description: "Descripción del parámetro",
+        example: "Colores de los productos de la tienda",
+        uniqueItems: true
+    })
+    @Column({
+        type: "varchar",
+        nullable: true,
+        length: 500,
+        comment: "Observacion del parámetro."
+    })
+    observacion?: string;
+
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -84,10 +96,9 @@ export class ParametroEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -99,8 +110,8 @@ export class ParametroEntity {
     @Column({
         type: "int",
         nullable: false,
-        name: "estado",
-        comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado"
+        comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado",
+        default: 1
     })
     estado?: number;
 
