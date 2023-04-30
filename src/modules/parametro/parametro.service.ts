@@ -10,10 +10,14 @@ export class ParametroService {
     constructor( private readonly servicioDeBaseDeDatos: IConexionDb) {}
     
     
-    async crearRegistro(crearParametroDto: CrearParametroDto) : Promise<ParametroEntity> {
-        console.log('ParametroService.crearRegistro');
-        console.log('Dto', crearParametroDto);
-        return await this.servicioDeBaseDeDatos.parametro.crearRegistro(crearParametroDto)
+    async crearRegistro(crearParametroDto: CrearParametroDto)  {
+        const parametro =  await this.servicioDeBaseDeDatos.parametro.crearRegistro(crearParametroDto);
+        if (parametro) {
+            return {
+                status: 201,
+                message: 'Parámetro creado correctamente',
+            }
+        }
     }
     
     async obtenerTodosLosRegistros(): Promise<ParametroEntity[]> {
@@ -36,8 +40,13 @@ export class ParametroService {
         return await this.servicioDeBaseDeDatos.parametro.obtenerUnRegistroPor({where: {uuid}}, 'Parámetro');
     }
     
-    async actualizarRegistro(uuid: string, actualizarParametroDto: ActualizarParametroDto) : Promise<ParametroEntity> {
-        console.log('ParametroService.actualizarRegistro');
-        return await this.servicioDeBaseDeDatos.parametro.actualizarRegistro(uuid, actualizarParametroDto);
+    async actualizarRegistro(uuid: string, actualizarParametroDto: ActualizarParametroDto)  {
+        const parametro = await this.servicioDeBaseDeDatos.parametro.actualizarRegistro(uuid, actualizarParametroDto);
+        if (parametro) {
+            return {
+                status: 201,
+                message: 'Parámetro actualizado correctamente',
+            }
+        }
     }
 }

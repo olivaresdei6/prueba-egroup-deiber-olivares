@@ -1,4 +1,4 @@
-import {Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
+import {Column, Entity, Index, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import { PermisoRolModuloRutaEntity } from "./";
 
@@ -69,7 +69,7 @@ export class PermisoModuloEntity {
         length: 500,
         comment: 'Descripción del módulo'
     })
-    description?: string;
+    descripcion?: string;
 
     @ApiProperty({
         example: 'Módulo de usuarios',
@@ -101,10 +101,9 @@ export class PermisoModuloEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;

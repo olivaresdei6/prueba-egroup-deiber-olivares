@@ -87,12 +87,17 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
             return instanciaDeLaEntidad;
 
         } catch (error) {
+            console.log('error', error);
             if (error.code === 'ER_DUP_ENTRY') {
                 throw new BadRequestException(`Ya existe un registro con el mismo nombre.`);
             }
 
             if (error.code === 'ER_NO_REFERENCED_ROW_2') {
                 throw new BadRequestException(`No existe el registro con el id enviado.`);
+            }
+
+            if (error.code === 'ER_NO_DEFAULT_FOR_FIELD') {
+                throw new InternalServerErrorException('No se reconocen los campos enviados.')
             }
 
             throw new InternalServerErrorException(`Error al guardar el registro en la base de datos.`);

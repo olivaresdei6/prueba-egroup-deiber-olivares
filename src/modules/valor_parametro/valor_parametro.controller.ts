@@ -21,13 +21,12 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 export class ValorParametroController {
     constructor(private readonly valorParametroService: ValorParametroService) {}
 
-    @ApiResponse({ status: 201, description: 'Valor Parámetro creado correctamente.', type: ValorParametroEntity})
+    @ApiResponse({ status: 201, description: 'Valor Parámetro creado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
-    @ApiResponse({ status: 404, description: 'Not Found: El Valor parámetro no existe.' })
     @Post()
-    crearRegistro(@Body() crearValorParametroDto: CrearValorParametroDto): Promise<ValorParametroEntity> {
+    crearRegistro(@Body() crearValorParametroDto: CrearValorParametroDto) {
         return this.valorParametroService.crearRegistro(crearValorParametroDto);
     }
 
@@ -55,12 +54,11 @@ export class ValorParametroController {
     @ApiQuery({name: 'campo', required: false, type: String})
     obtenerRegistrosPaginados(@Query() parametrosConsulta) {
         const {limite, pagina, busqueda, campo} = parametrosConsulta;
-        console.log(limite, pagina, busqueda, campo);
         return this.valorParametroService.obtenerRegistrosPaginados(limite, pagina, busqueda, campo);
     }
 
 
-    @ApiResponse({ status: 201, description: 'Valores Parámetros encontrados correctamente.', type: ValorParametroEntity, isArray: true})
+    @ApiResponse({ status: 201, description: 'Valore Parámetro encontrado correctamente.', type: ValorParametroEntity, isArray: true})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
@@ -72,13 +70,13 @@ export class ValorParametroController {
 
 
 
-    @ApiResponse({ status: 201, description: 'Valor Parámetro actualizado correctamente.', type: ValorParametroEntity})
+    @ApiResponse({ status: 201, description: 'Valor Parámetro actualizado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El valor parámetro no existe.' })
     @Patch(':uuid')
-    actualizarRegistro(@Param('uuid', ParseUUIDPipe) uuid, @Body() actualizarValorParametroDto: ActualizarValorParametroDto): Promise<ValorParametroEntity> {
+    actualizarRegistro(@Param('uuid', ParseUUIDPipe) uuid, @Body() actualizarValorParametroDto: ActualizarValorParametroDto) {
         return this.valorParametroService.actualizarRegistro(uuid, actualizarValorParametroDto);
     }
 }

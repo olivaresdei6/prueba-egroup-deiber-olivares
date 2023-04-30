@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
 import { CrearValorParametroDto } from "./dto/crear-valor_parametro.dto";
 import { ValorParametroEntity } from "../../frameworks/database/mysql/entities";
-import { ActualizarParametroDto } from "../parametro/dto/actualizar-parametro.dto";
 import { ActualizarValorParametroDto } from "./dto/actualizar-valor_parametro.dto";
 
 @Injectable()
@@ -10,9 +9,15 @@ export class ValorParametroService {
     constructor( private readonly servicioDeBaseDeDatos: IConexionDb) {}
     
     
-    async crearRegistro(crearValorParametroDto: CrearValorParametroDto) : Promise<ValorParametroEntity> {
+    async crearRegistro(crearValorParametroDto: CrearValorParametroDto)  {
         const idParametro = await this.obtenerIdParametroPorUUID(crearValorParametroDto.uuid_parametro);
-        return await this.servicioDeBaseDeDatos.valorParametro.crearRegistro({...crearValorParametroDto, parametro: idParametro});
+        const valorParametro = await this.servicioDeBaseDeDatos.valorParametro.crearRegistro({...crearValorParametroDto, parametro: idParametro});
+        if (valorParametro) {
+            return {
+                status: 201,
+                message: 'Valor parámetro creado correctamente',
+            }
+        }
     }
     
     async obtenerTodosLosRegistros(): Promise<ValorParametroEntity[]> {
@@ -34,17 +39,16 @@ export class ValorParametroService {
             return await this.servicioDeBaseDeDatos.valorParametro.obtenerRegistrosPaginados({limite, pagina});
         }
     }
-    
-    async actualizarRegistro(uuid: string, actualizarValorParametroDto: ActualizarValorParametroDto) : Promise<ValorParametroEntity> {
-        const {uuid_parametro} = actualizarValorParametroDto;
-        if (uuid_parametro) {
-            const idParametro = await this.obtenerIdParametroPorUUID(actualizarValorParametroDto.uuid_parametro);
-            return await this.servicioDeBaseDeDatos.valorParametro.actualizarRegistro(uuid, {...actualizarValorParametroDto, parametro: idParametro});
-        }else{
-            return await this.servicioDeBaseDeDatos.valorParametro.actualizarRegistro(uuid, actualizarValorParametroDto);
+
+    async actualizarRegistro(uuid: string, actualizarValorParametroDto: ActualizarValorParametroDto){
+        const valorParametro = await this.servicioDeBaseDeDatos.valorParametro.actualizarRegistro(uuid, actualizarValorParametroDto);
+        if (valorParametro) {
+            return {
+                status: 201,
+                message: 'Parámetro actualizado correctamente',
+            }
         }
     }
-
     private async obtenerIdParametroPorUUID(uuid: string) {
         const {id} = await this.servicioDeBaseDeDatos.parametro.obtenerUnRegistroPor(
             {where: {uuid}},
@@ -52,7 +56,5 @@ export class ValorParametroService {
         );
         return id;
     }
-
-    private
     
 }
