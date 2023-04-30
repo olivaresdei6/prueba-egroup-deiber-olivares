@@ -23,5 +23,12 @@ export const JoiValidationSchema = Joi.object({
 	JWT_SECRET: Joi.string().required(),
 	STAGE: Joi.string().valid("dev", "prod").required(),
 	URL_API: Joi.string().required(),
+	EMAIL_HOST: Joi.string().required(),
+	EMAIL_PORT: Joi.number().default(587),
+	EMAIL_USER: Joi.string().required(),
+	EMAIL_PASSWORD: Joi.string().required(),
+	EMAIL_FROM: Joi.string().required(),
+	URL_FRONT: Joi.string().required(),
+	URL_CONFIRMATION: Joi.string().required(),
 
 });

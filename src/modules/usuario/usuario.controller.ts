@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
@@ -36,6 +37,17 @@ export class UsuarioController {
     @Post('login')
     iniciarSesion(@Body() loginUsuarioDto: LoginUsuarioDto){
         return this.usuarioService.iniciarSesion(loginUsuarioDto);
+    }
+
+    @ApiResponse({ status: 201, description: 'Usuario activado correctamente.'})
+    @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
+    @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
+    @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Get('activar/:codeAuth')
+    activarUsuario(@Param('codeAuth') codeAuth: string){
+        if (!codeAuth) throw new BadRequestException('El código de activación es requerido');
+        if (codeAuth.length > 36) throw new BadRequestException('El código de activación no es válido');
+        return this.usuarioService.activarCuenta(codeAuth);
     }
 
     @ApiResponse({ status: 201, description: 'Usuario creado correctamente.'})

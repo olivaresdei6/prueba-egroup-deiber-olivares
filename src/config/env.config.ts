@@ -12,5 +12,14 @@ export const envConfiguration = () => ({
     jwtSecret: process.env.JWT_SECRET,
     satage: process.env.STAGE,
     urlApi: process.env.URL_API,
+    emailHost: process.env.EMAIL_HOST,
+    emailPort: parseInt(process.env.EMAIL_PORT, 10) || 587,
+    emailUser: process.env.EMAIL_USER,
+    emailPassword: process.env.EMAIL_PASSWORD,
+    emailFrom: process.env.EMAIL_FROM,
+    urlFront: process.env.URL_FRONT,
+    urlConfirmAccount: process.env.URL_CONFIRMATION,
+
+
 
 })

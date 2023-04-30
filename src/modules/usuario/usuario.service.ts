@@ -1,17 +1,26 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
 import { ParametroEntity, UsuarioEntity } from "../../frameworks/database/mysql/entities";
 import * as bcrypt from "bcrypt";
 import { ActualizarUsuarioDto, CrearUsuarioDto, LoginUsuarioDto } from "./dto";
 import { generateCodeAuth } from "../../helper/generateCodeAuth";
+import { MailerService } from "@nestjs-modules/mailer";
+import { MailService } from "../../frameworks/mails/mail.service";
 
 @Injectable()
 export class UsuarioService {
-    constructor( private readonly servicioDeBaseDeDatos: IConexionDb) {}
+    constructor(
+        private readonly servicioDeBaseDeDatos: IConexionDb,
+        private readonly mailerService: MailerService,
+        private readonly emailService: MailService,
+
+
+    ) {}
     
     
     async registrarUsuario(crearUsuarioDto: CrearUsuarioDto, rol: string)  {
         const {password} = crearUsuarioDto;
+        const codigoAutenticacion = generateCodeAuth();
         // Encripto la contraseña
         const salt = await bcrypt.genSalt( 10 );
         const passwordEncriptada = await bcrypt.hash( password, salt );
@@ -19,13 +28,31 @@ export class UsuarioService {
             {where: {nombre: rol}}, 'Rol',
         );
         await this.servicioDeBaseDeDatos.usuario.crearRegistro({
-            ...crearUsuarioDto, password: passwordEncriptada, rol: tipoUsuario, codigoAutenticacion: generateCodeAuth()
+            ...crearUsuarioDto, password: passwordEncriptada, rol: tipoUsuario, codigoAutenticacion
         });
-        return {
-            status: 201,
-            message: 'Usuario creado correctamente',
+        const isSendEmail = await this.emailService.userMail.sendConfirmationEmail(crearUsuarioDto.correo, crearUsuarioDto.nombre, codigoAutenticacion, this.mailerService);
+        if (isSendEmail) {
+            return {
+                status: 201,
+                message: 'Usuario creado correctamente. Revisa mailtrap para activar tu cuenta',
+            }
         }
 
+    }
+
+    async activarCuenta(codigoAutenticacion: string) {
+        const usuario = await this.servicioDeBaseDeDatos.usuario.obtenerUnRegistroPor(
+            {where: {codigoAutenticacion}}, 'Usuario',
+        );
+        if (!usuario) {
+            throw new NotFoundException('No se encontro un usuario en el sistema con los datos ingresados');
+        }
+        const {uuid} = usuario;
+        await this.servicioDeBaseDeDatos.usuario.actualizarRegistro(uuid, {estaActivo: true, codigoAutenticacion: generateCodeAuth()});
+        return {
+            status: 200,
+            message: 'Cuenta activada correctamente. Se realiza una peticion get, no es lo ideal, pero no alcanze a hacer el front la expongo directamente aunque lo ideal seria que en el correo se enviara un link con el codigo de autenticacion y se redirigiera a la pagina de login',
+        }
     }
 
     async iniciarSesion({correo, password}: LoginUsuarioDto) {
@@ -40,6 +67,10 @@ export class UsuarioService {
         const passwordValida = await bcrypt.compare(password, passwordUsuario);
         if (!passwordValida) {
             throw new NotFoundException('No se encontro un usuario en el sistema con los datos ingresados')
+        }
+
+        if (usuarioEncontrado.estaActivo === false) {
+            throw new ForbiddenException('El usuario no esta activo en el sistema. Por favor revise su correo para activar su cuenta')
         }
         return {
             status: 200,
