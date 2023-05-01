@@ -1,9 +1,9 @@
 import {
     Column,
-    Entity,
+    Entity, Index,
     JoinColumn,
     ManyToOne,
-    PrimaryGeneratedColumn,
+    PrimaryGeneratedColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {
@@ -13,6 +13,7 @@ import {
 } from "./index";
 
 @Entity({name: 'permiso'})
+@Index(['rol', 'modulo', 'ruta'], {unique: true})
 export class PermisoEntity {
     @ApiProperty({
         example: 1,
@@ -113,7 +114,7 @@ export class PermisoEntity {
     modulo!: number | PermisoParametroEntity;
     
     @ManyToOne(() => PermisoRutaEntity, permisoRuta => permisoRuta.id, { nullable: false, eager: true  })
-    @JoinColumn({name: 'id_route'})
+    @JoinColumn({name: 'id_ruta'})
     ruta!: number | PermisoRutaEntity;
     
 }

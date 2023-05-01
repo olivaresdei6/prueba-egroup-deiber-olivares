@@ -42,15 +42,18 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
      * @param lanzarExepcion
      */
     async obtenerUnRegistroPor(opcionesDeConsultas: FindOneOptions<T>, nombreDeLaEntidad: string, lanzarExepcion: boolean = true): Promise<T> {
-        nombreDeLaEntidad = nombreDeLaEntidad ? nombreDeLaEntidad : this._repositorio.metadata.name;
-        const entidad: T = await this._repositorio.findOne(opcionesDeConsultas);
-        if (!entidad && lanzarExepcion) {
-            if (!entidad) throw new NotFoundException(`No se encontró el registro de ${nombreDeLaEntidad} en la base de datos.`);
-            console.log('entidad', entidad);
-            // @ts-ignore
-            if (entidad.estado === 0) throw new NotFoundException(`El registro de ${nombreDeLaEntidad} se encuentra eliminado.`);
+        try {
+            nombreDeLaEntidad = nombreDeLaEntidad ? nombreDeLaEntidad : this._repositorio.metadata.name;
+            const entidad: T = await this._repositorio.findOne(opcionesDeConsultas);
+            if (!entidad && lanzarExepcion) {
+                if (!entidad) throw new NotFoundException(`No se encontró el registro de ${nombreDeLaEntidad} en la base de datos.`);
+                // @ts-ignore
+                if (entidad.estado === 0) throw new NotFoundException(`El registro de ${nombreDeLaEntidad} se encuentra eliminado.`);
+            }
+            return entidad;
+        }catch (e) {
+            throw new InternalServerErrorException('Error al obtener el registro de la base de datos.');
         }
-        return entidad;
     }
 
     /**
@@ -87,7 +90,6 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
             return instanciaDeLaEntidad;
 
         } catch (error) {
-            console.log('error', error);
             if (error.code === 'ER_DUP_ENTRY') {
                 throw new BadRequestException(`Ya existe un registro con el mismo nombre.`);
             }
@@ -176,13 +178,11 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
 
         } else{
             // @ts-ignore
-            instanceToUpdate = await this._repositorio.findOne({ where: { d } })
+            instanceToUpdate = await this._repositorio.findOne({ where: { id } })
         }
-        console.log('instanceToUpdate', instanceToUpdate);
 
         if (!instanceToUpdate) throw new NotFoundException(`No se encontró el registro de ${this._repositorio.metadata.tableName} en la base de datos.`);
         try {
-            console.log('entity', entity);
             /**
             * Se hace uso del método merge() del repositorio para actualizar los datos del registro.
             */
@@ -203,12 +203,10 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
             return updatedInstance;
 
         } catch (error) {
-            console.log('Entró al catch');
             /**
              * Si ocurre un error, se deshacen los cambios en la base de datos.
              */
             await queryRunner.rollbackTransaction();
-            console.log('Pasó el rollback');
             /**
              * Se manejan las excepciones que puedan ocurrir.
              */

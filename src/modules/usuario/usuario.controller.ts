@@ -7,7 +7,7 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
-    Query, UseInterceptors
+    Query, Req, UseInterceptors
 } from "@nestjs/common";
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UsuarioEntity } from "../../frameworks/database/mysql/entities";
@@ -15,6 +15,7 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 import { UsuarioService } from "./usuario.service";
 import { ActualizarUsuarioDto, CrearUsuarioDto, LoginUsuarioDto } from "./dto";
 import { roles } from "./objects/roles";
+import { Auth } from "./decorators/auth.decorator";
 
 @ApiTags("Usuario")
 @Controller('usuario')
@@ -54,6 +55,7 @@ export class UsuarioController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post('administrador')
     registrarAdministrador(@Body() crearParametroDto: CrearUsuarioDto){
         return this.usuarioService.registrarUsuario(crearParametroDto, roles.usuarioAdministrador);
@@ -74,6 +76,7 @@ export class UsuarioController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron usuarios registrados' })
+    @Auth()
     @Get()
     obtenerTodosLosUsuarios()  {
         return this.usuarioService.obtenerTodosLosUsuarios();
@@ -84,6 +87,7 @@ export class UsuarioController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron usuarios registrados' })
+    @Auth()
     @Get('paginado')
     @UseInterceptors(PaginacionInterceptor)
     @ApiQuery({name: 'pagina', required: true, type: Number})
@@ -102,22 +106,35 @@ export class UsuarioController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El usuario no existe.' })
+    @Auth()
     @Get(':uuid')
     obtenerUnUsuario(@Param('uuid', ParseUUIDPipe) uuid: string) {
         return this.usuarioService.obtenerUnUsuario(uuid);
     }
     
-    
-    
+
     @ApiResponse({ status: 201, description: 'Usuario actualizado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El usuario no existe.' })
+    @Auth()
     @Patch(':uuid')
     actualizarUsuario(@Param('uuid', ParseUUIDPipe) uuid:string, @Body() actualizarUsuarioDto: ActualizarUsuarioDto) {
         return this.usuarioService.actualizarRegistro(uuid, actualizarUsuarioDto);
     }
-    
-    
+
+    @ApiResponse({ status: 201, description: 'Sesión cerrada correctamente' })
+    @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
+    @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
+    @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @ApiResponse({ status: 404, description: 'Not Found: El código de usuario no existe' })
+    @Post('cerrar_sesion')
+    logOut(@Req() req) {
+        const token = req.headers.authorization.split(' ')[1];
+        return this.usuarioService.cerrarSesion(token);
+    }
+
+
+
 }

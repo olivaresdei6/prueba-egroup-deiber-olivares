@@ -35,8 +35,6 @@ export class RegistroDeAccesoEntity {
         example: ' 2021-05-05 12:00:00',
         description: 'Fecha de ingreso del usuario al sistema con un nuevo token de acceso',
     })
-    @CreateDateColumn({type: 'timestamp', nullable: false, name: 'date_access'})
-    date_access?: Date;
     @Column({
         type: "timestamp",
         nullable: false,
@@ -87,8 +85,8 @@ export class RegistroDeAccesoEntity {
         example: 1,
         description: 'Id del usuario que accedió al sistema',
     })
-    @ManyToOne(() => UsuarioEntity, usuario => usuario.registroDeAcceso)
-    @JoinColumn({name: 'id_user'})
+    @ManyToOne(() => UsuarioEntity, usuario => usuario.id, {nullable: false, eager: true})
+    @JoinColumn({name: 'id_usuario'})
     usuario!: number | UsuarioEntity;
 
     @ApiProperty({

@@ -179,7 +179,7 @@ export class UsuarioEntity {
         description: 'Registros de acceso del usuario',
         type: () => [RegistroDeAccesoEntity],
     })
-    @OneToMany(() => RegistroDeAccesoEntity, registroDeAcceso => registroDeAcceso.id)
+    @OneToMany(() => RegistroDeAccesoEntity, registroDeAcceso => registroDeAcceso.usuario)
     registroDeAcceso?: RegistroDeAccesoEntity[];
 
     @OneToMany(() => CompraEntity, compraa => compraa.usuario)

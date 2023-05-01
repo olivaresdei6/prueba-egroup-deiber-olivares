@@ -1,14 +1,15 @@
 import {
     Column,
-    Entity,
+    Entity, Index,
     JoinColumn,
     ManyToOne,
-    PrimaryGeneratedColumn,
+    PrimaryGeneratedColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import { PermisoParametroEntity, PermisoRutaEntity } from "./index";
 
 @Entity({name: 'permiso_parametro_ruta'})
+@Index(['ruta', 'parametro'], { unique: true })
 export class PermisoParametroRutaEntity {
 
     @ApiProperty({
@@ -112,6 +113,6 @@ export class PermisoParametroRutaEntity {
         description: 'Identificador único del parámetro',
     })
     @ManyToOne(() => PermisoParametroEntity, permisoParametro => permisoParametro.id, { nullable: false, eager: true })
-    @JoinColumn({name: 'id_route_parameter'})
+    @JoinColumn({name: 'id_parametro'})
     parametro!: number | PermisoParametroEntity
 }

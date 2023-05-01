@@ -15,12 +15,14 @@ import {ActualizarParametroDto} from './dto/actualizar-parametro.dto';
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ParametroEntity } from "../../frameworks/database/mysql/entities";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
+import { Auth } from "../usuario/decorators/auth.decorator";
 
 @ApiTags("Parametro")
 @Controller('parametro')
 export class ParametroController {
     constructor(private readonly parametroService: ParametroService) {}
-    
+
+    @Auth()
     @ApiResponse({ status: 201, description: 'Parámetro creado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })

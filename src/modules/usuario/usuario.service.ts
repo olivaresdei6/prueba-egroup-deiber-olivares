@@ -1,11 +1,14 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
-import { ParametroEntity, UsuarioEntity } from "../../frameworks/database/mysql/entities";
+import { ParametroEntity, RegistroDeAccesoEntity } from "../../frameworks/database/mysql/entities";
 import * as bcrypt from "bcrypt";
 import { ActualizarUsuarioDto, CrearUsuarioDto, LoginUsuarioDto } from "./dto";
 import { generateCodeAuth } from "../../helper/generateCodeAuth";
 import { MailerService } from "@nestjs-modules/mailer";
 import { MailService } from "../../frameworks/mails/mail.service";
+import {JwtService} from "@nestjs/jwt";
+import { envConfiguration } from "../../config/env.config";
+import { JwtPayload } from "./interfaces/jwt.payload.interface";
 
 @Injectable()
 export class UsuarioService {
@@ -13,6 +16,7 @@ export class UsuarioService {
         private readonly servicioDeBaseDeDatos: IConexionDb,
         private readonly mailerService: MailerService,
         private readonly emailService: MailService,
+        private readonly jwtService: JwtService,
 
 
     ) {}
@@ -72,11 +76,15 @@ export class UsuarioService {
         if (usuarioEncontrado.estaActivo === false) {
             throw new ForbiddenException('El usuario no esta activo en el sistema. Por favor revise su correo para activar su cuenta')
         }
+
+        const token = await this.registrarToken(uuid, usuarioEncontrado.id);
+
         return {
             status: 200,
             message: 'Inicio de sesión correcto',
             data: {
                 uuid,
+                token,
             }
         }
     }
@@ -112,5 +120,41 @@ export class UsuarioService {
             actualizarUsuarioDto.password = await bcrypt.hash(password, salt);
         }
         await this.servicioDeBaseDeDatos.usuario.actualizarRegistro(uuid, actualizarUsuarioDto);
+    }
+
+    private async registrarToken(uuid: string, id:number) {
+        const token  = this.getToken({uuid});
+        const { exp } = await this.extraerDataToken(token);
+        const fechaDeExpiracionToken = new Date(exp * 1000);
+        console.log(fechaDeExpiracionToken);
+        await this.servicioDeBaseDeDatos.registroDeAcceso.crearRegistro({
+            fechaDeExpiracionToken,
+            token,
+            usuario: id,
+        });
+        return token;
+
+    }
+
+    public async cerrarSesion(token: string) {
+        const {id, fechaDeSalida}: RegistroDeAccesoEntity = await this.servicioDeBaseDeDatos.registroDeAcceso.obtenerUnRegistroPor({where: {token}}, 'Registro de acceso');
+        console.log(fechaDeSalida);
+        if(fechaDeSalida) {
+            throw new BadRequestException('La sesion ya ha sido cerrada anteriormente');
+        }else{
+            await this.servicioDeBaseDeDatos.registroDeAcceso.actualizarRegistro(+id, {fechaDeSalida: new Date()});
+            return { message: 'Sección cerrada correctamente', token}
+        }
+
+    }
+
+
+    private getToken(payload: JwtPayload) : string {
+        return this.jwtService.sign(payload, {algorithm: 'HS512'});
+    }
+
+    private async extraerDataToken(token: string) {
+        const { exp, uuid } = this.jwtService.verify(token, {secret: envConfiguration().jwtSecret});
+        return { exp, uuid };
     }
 }
