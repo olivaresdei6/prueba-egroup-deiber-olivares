@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import {ApiProperty} from "@nestjs/swagger";
 import { DepartamentoEntity, ImagenEntity } from "./index";
 
-@Entity({name: 'Pais'})
+@Entity({name: 'pais'})
 export class PaisEntity {
     @ApiProperty({
         example: 1,
@@ -43,19 +43,28 @@ export class PaisEntity {
         comment: "Nombre del país. Ejemplo: Colombia"
     })
     nombre!: string;
-    
+
     @ApiProperty({
-        example: 'Bogotá',
-        description: 'Capital del país',
-        uniqueItems: true,
+        example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
+        description: 'Descripción del país',
     })
-    @Column('varchar', {
-        unique: true,
-        nullable: false,
-        length : 100,
-        comment: "Capital del país. Ejemplo: Bogotá"
+    @Column({
+        type: "varchar",
+        nullable: true,
+        comment: "Descripción del país"
     })
-    capital!: string;
+    descripcion?: string;
+
+    @ApiProperty({
+        example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
+        description: 'observacion del país',
+    })
+    @Column({
+        type: "varchar",
+        nullable: true,
+        comment: "observacion del país"
+    })
+    observacion?: string;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -76,10 +85,9 @@ export class PaisEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -96,13 +104,6 @@ export class PaisEntity {
         default: 1
     })
     estado?: number;
-    
-    @ApiProperty({
-        example: '1',
-        description: 'Logo del país',
-    })
-    @ManyToOne(() => ImagenEntity, imagen => imagen.id, {nullable: true, eager: true})
-    logo?: ImagenEntity;
 
     @OneToMany(() => DepartamentoEntity, departamento => departamento.pais)
     departamentos?: DepartamentoEntity[];

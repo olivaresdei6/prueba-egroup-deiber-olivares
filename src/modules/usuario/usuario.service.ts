@@ -9,6 +9,7 @@ import { MailService } from "../../frameworks/mails/mail.service";
 import {JwtService} from "@nestjs/jwt";
 import { envConfiguration } from "../../config/env.config";
 import { JwtPayload } from "./interfaces/jwt.payload.interface";
+import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 
 @Injectable()
 export class UsuarioService {
@@ -98,11 +99,10 @@ export class UsuarioService {
     }
 
     async obtenerUsuariosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
-        const camposPermitidos = [ 'nombre', 'apellido', 'correo', 'telefono' ];
-        if (campo && !camposPermitidos.includes(campo.toLowerCase())) {
-            throw new BadRequestException('El campo enviado no es permitido');
+        if (campo && !camposDeBusquedaGenericos.includes(campo.toLowerCase())) {
+            throw new BadRequestException('El campo enviado no es permitido. Se esperaba uno de estos: ' + camposDeBusquedaGenericos.join(', '));
         }
-        if (busqueda && campo) {
+        else if (busqueda && campo) {
             return await this.servicioDeBaseDeDatos.usuario.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
         }else {
             return await this.servicioDeBaseDeDatos.usuario.obtenerRegistrosPaginados({limite, pagina});

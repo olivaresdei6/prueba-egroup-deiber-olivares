@@ -63,6 +63,18 @@ export class DepartamentoEntity {
         length: 500
     })
     observacion?: string;
+
+    @ApiProperty({
+        example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
+        description: 'descripcion del departamento',
+        nullable: true
+    })
+    @Column('varchar', {
+        nullable: true,
+        comment: 'descripcion del departamento',
+        length: 500
+    })
+    descripcion?: string;
     
     @ApiProperty({
         example: 1,
@@ -94,21 +106,13 @@ export class DepartamentoEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
-    
-    @ApiProperty({
-        example: 'cundinamarca.jpg',
-        description: 'Logo del departamento',
-    })
-    @ManyToOne(() => ImagenEntity, imagen => imagen.id, {nullable: true, eager: true})
-    logo?: number | ImagenEntity;
-    
+
     @ManyToOne(() => PaisEntity, pais => pais.id, {nullable: false, eager: true})
     @JoinColumn({name: 'id_pais'})
     pais?: number | PaisEntity;

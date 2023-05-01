@@ -3,6 +3,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { CrearPermisoRolDto } from "./dto/crear-permiso-rol.dto";
 import { ActualizarPermisoRolDto } from "./dto/actualizar-permiso-rol.dto";
 import { PermisoRolEntity } from "../../frameworks/database/mysql/entities";
+import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 
 @Injectable()
 export class PermisoRolService {
@@ -23,11 +24,10 @@ export class PermisoRolService {
     }
 
     async obtenerRegistrosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
-        const camposPermitidos = [ 'nombre', 'descripcion', 'observacion'];
-        if (campo && !camposPermitidos.includes(campo.toLowerCase())) {
-            throw new BadRequestException('El campo enviado no es permitido.');
+        if (campo && !camposDeBusquedaGenericos.includes(campo.toLowerCase())) {
+            throw new BadRequestException('El campo enviado no es permitido. Se esperaba uno de estos: ' + camposDeBusquedaGenericos.join(', '));
         }
-        if (busqueda && campo) {
+        else if (busqueda && campo) {
             return await this.servicioDeBaseDeDatos.permisoRol.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
         }else {
             return await this.servicioDeBaseDeDatos.permisoRol.obtenerRegistrosPaginados({limite, pagina});

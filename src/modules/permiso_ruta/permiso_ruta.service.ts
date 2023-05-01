@@ -6,6 +6,7 @@ import { parametrosRegistrados } from "../parametro/objects/parametros-registrad
 import { CrearRelacionRutaParametroDto } from "./dto/crear-relacion-ruta-parametro.dto";
 import { ActualizarRelacionRutaParametroDto } from "./dto/actualizar-relacion-ruta-parametro.dto";
 import { isValidUuid } from "../../helper/validateUUID";
+import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 
 @Injectable()
 export class PermisoRutaService {
@@ -59,11 +60,10 @@ export class PermisoRutaService {
     }
 
     async obtenerRegistrosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
-        const camposPermitidos = [ 'nombre', 'descripcion', 'observacion'];
-        if (campo && !camposPermitidos.includes(campo.toLowerCase())) {
-            throw new BadRequestException('El campo enviado no es permitido');
+        if (campo && !camposDeBusquedaGenericos.includes(campo.toLowerCase())) {
+            throw new BadRequestException('El campo enviado no es permitido. Se esperaba uno de estos: ' + camposDeBusquedaGenericos.join(', '));
         }
-        if (busqueda && campo) {
+        else if (busqueda && campo) {
             return await this.servicioDeBaseDeDatos.permisoRuta.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
         }else {
             return await this.servicioDeBaseDeDatos.permisoRuta.obtenerRegistrosPaginados({limite, pagina});

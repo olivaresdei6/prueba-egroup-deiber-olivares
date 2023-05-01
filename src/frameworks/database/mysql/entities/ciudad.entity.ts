@@ -55,12 +55,24 @@ export class CiudadEntity {
 
     @ApiProperty({
         example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
+        description: 'Observaciones de la descripcion',
+        nullable: true
+    })
+    @Column('varchar', {
+        nullable: true,
+        length: 500,
+        comment: 'Descripcion de la ciudad',
+    })
+    descripcion?: string;
+
+    @ApiProperty({
+        example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
         description: 'Observaciones de la ciudad.abstract.ts',
         nullable: true
     })
     @Column('text', {
         nullable: true,
-        comment: 'Observaciones de la ciudad.abstract.ts',
+        comment: 'Observaciones de la ciudad',
     })
     observacion?: string;
 
@@ -94,20 +106,12 @@ export class CiudadEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
-
-    @ApiProperty({
-        example: 'bogota.jpg',
-        description: 'Logo del departamento',
-    })
-    @ManyToOne(() => ImagenEntity, imagen => imagen.id, {nullable: true, eager: true})
-    logo?: number | ImagenEntity;
     
     @ApiProperty({
         example: 1,

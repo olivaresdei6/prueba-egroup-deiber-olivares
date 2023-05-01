@@ -9,6 +9,7 @@ import {
 import { CrearPermisoDto } from "./dto/crear-permiso.dto";
 import { PermisoModule } from "./permiso.module";
 import { ActualizarPermisoDto } from "./dto/actualizar-permiso.dto";
+import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 
 @Injectable()
 export class PermisoService {
@@ -39,11 +40,10 @@ export class PermisoService {
     }
 
     async obtenerRegistrosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
-        const camposPermitidos = [ 'nombre', 'descripcion', 'observacion'];
-        if (campo && !camposPermitidos.includes(campo.toLowerCase())) {
-            throw new BadRequestException('El campo enviado no es permitido');
+        if (campo && !camposDeBusquedaGenericos.includes(campo.toLowerCase())) {
+            throw new BadRequestException('El campo enviado no es permitido. Se esperaba uno de estos: ' + camposDeBusquedaGenericos.join(', '));
         }
-        if (busqueda && campo) {
+        else if (busqueda && campo) {
             return await this.servicioDeBaseDeDatos.permiso.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
         }else {
             return await this.servicioDeBaseDeDatos.permiso.obtenerRegistrosPaginados({limite, pagina});

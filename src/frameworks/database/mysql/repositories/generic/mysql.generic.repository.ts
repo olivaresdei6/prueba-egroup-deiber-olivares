@@ -42,18 +42,15 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
      * @param lanzarExepcion
      */
     async obtenerUnRegistroPor(opcionesDeConsultas: FindOneOptions<T>, nombreDeLaEntidad: string, lanzarExepcion: boolean = true): Promise<T> {
-        try {
-            nombreDeLaEntidad = nombreDeLaEntidad ? nombreDeLaEntidad : this._repositorio.metadata.name;
-            const entidad: T = await this._repositorio.findOne(opcionesDeConsultas);
-            if (!entidad && lanzarExepcion) {
-                if (!entidad) throw new NotFoundException(`No se encontró el registro de ${nombreDeLaEntidad} en la base de datos.`);
-                // @ts-ignore
-                if (entidad.estado === 0) throw new NotFoundException(`El registro de ${nombreDeLaEntidad} se encuentra eliminado.`);
-            }
-            return entidad;
-        }catch (e) {
-            throw new InternalServerErrorException('Error al obtener el registro de la base de datos.');
+        nombreDeLaEntidad = nombreDeLaEntidad ? nombreDeLaEntidad : this._repositorio.metadata.name;
+        const entidad: T = await this._repositorio.findOne(opcionesDeConsultas);
+        if (!entidad && lanzarExepcion) {
+            if (!entidad) throw new NotFoundException(`No se encontró el registro de ${nombreDeLaEntidad} en la base de datos.`);
+            // @ts-ignore
+            if (entidad.estado === 0) throw new NotFoundException(`El registro de ${nombreDeLaEntidad} se encuentra eliminado.`);
         }
+        return entidad;
+
     }
 
     /**
@@ -64,8 +61,12 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
      * @param options
      */
     public async obtenerRegistrosPor(where: FindOptionsWhere<T> | FindOptionsWhere<T>[], options?: FindOneOptions<T>): Promise<T[]> {
-        const select = options ? options.select : [];
-        return await this._repositorio.find({ where, select});
+        try {
+            const select = options ? options.select : [];
+            return await this._repositorio.find({ where, select});
+        } catch (e) {
+            throw new BadRequestException('Los datos enviados no son correctos.');
+        }
     }
 
     /**
@@ -159,9 +160,9 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
     /**
      * Método que permite actualizar un registro de la base de datos.
      * @param id
-     * @param entity
+     * @param entidadModificada
      */
-    async actualizarRegistro(id: string | number, entity: DeepPartial<T>): Promise<T> {
+    async actualizarRegistro(id: string | number, entidadModificada: DeepPartial<T>): Promise<T> {
         /**
          * Se crea una nueva instancia de QueryRunner para poder ejecutar transacciones.
          * Esto es necesario para poder hacer rollback en caso de que ocurra un error.
@@ -170,28 +171,27 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
         await queryRunner.connect();
         await queryRunner.startTransaction();
 
-        // @ts-ignore
-        let instanceToUpdate: T;
+        let instanciaHaModificar: T;
         if(typeof id === 'string')  {
             // @ts-ignore
-            instanceToUpdate = await this._repositorio.findOne({ where: { uuid: id } })
+            instanciaHaModificar = await this._repositorio.findOne({ where: { uuid: id } })
 
         } else{
             // @ts-ignore
-            instanceToUpdate = await this._repositorio.findOne({ where: { id } })
+            instanciaHaModificar = await this._repositorio.findOne({ where: { id } })
         }
 
-        if (!instanceToUpdate) throw new NotFoundException(`No se encontró el registro de ${this._repositorio.metadata.tableName} en la base de datos.`);
+        if (!instanciaHaModificar) throw new NotFoundException(`No se encontró el registro de ${this._repositorio.metadata.tableName} en la base de datos.`);
         try {
             /**
             * Se hace uso del método merge() del repositorio para actualizar los datos del registro.
             */
-            instanceToUpdate = this._repositorio.merge(instanceToUpdate, entity);
+            instanciaHaModificar = this._repositorio.merge(instanciaHaModificar, entidadModificada);
 
             /**
             * Se actualiza el registro en la base de datos.
             */
-            const updatedInstance = await queryRunner.manager.save(instanceToUpdate);
+            const updatedInstance = await queryRunner.manager.save(instanciaHaModificar);
 
             /**
             * Se confirman los cambios en la base de datos.
