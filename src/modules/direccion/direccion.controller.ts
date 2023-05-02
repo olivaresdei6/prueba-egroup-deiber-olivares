@@ -6,11 +6,9 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
-    Query, UseInterceptors
+    Query
 } from "@nestjs/common";
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
-import { Auth } from "../usuario/decorators/auth.decorator";
 import {
     ActualizarCiudadDto,
     ActualizarDepartamentoDto, ActualizarDireccionDto, ActualizarPaisDto,

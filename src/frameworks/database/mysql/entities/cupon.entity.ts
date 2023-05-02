@@ -137,10 +137,9 @@ export class CuponDeDescuentoEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -163,7 +162,6 @@ export class CuponDeDescuentoEntity {
         type: "int",
         nullable: false,
         default: 1,
-        name: "estado",
         comment: "Estado del cupon. 1: Activo, 2: Inactivo"
     })
     estado?: number;

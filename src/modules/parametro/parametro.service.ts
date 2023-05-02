@@ -3,7 +3,6 @@ import {CrearParametroDto} from './dto/crear-parametro.dto';
 import {ActualizarParametroDto} from './dto/actualizar-parametro.dto';
 import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
 import { ParametroEntity } from "../../frameworks/database/mysql/entities";
-import { when } from "joi";
 import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 
 @Injectable()

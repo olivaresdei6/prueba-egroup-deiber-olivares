@@ -5,7 +5,6 @@ import { ActualizarPermisoRutaDto } from "./dto/actualizar-permiso-ruta.dto";
 import { parametrosRegistrados } from "../parametro/objects/parametros-registrados";
 import { CrearRelacionRutaParametroDto } from "./dto/crear-relacion-ruta-parametro.dto";
 import { ActualizarRelacionRutaParametroDto } from "./dto/actualizar-relacion-ruta-parametro.dto";
-import { isValidUuid } from "../../helper/validateUUID";
 import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 
 @Injectable()

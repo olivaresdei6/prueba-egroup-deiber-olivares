@@ -7,7 +7,7 @@ import {
     PrimaryGeneratedColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
-import {ImagenEntity, PaisEntity, CiudadEntity } from "./index";
+import { PaisEntity, CiudadEntity } from "./index";
 
 @Entity({name: 'departamento'})
 @Index('unq_departamento_pais', ['nombre', 'pais'], {unique: true })

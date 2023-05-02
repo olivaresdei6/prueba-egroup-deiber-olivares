@@ -9,4 +9,4 @@ export class ResponseBadRequestFormat {
     path: string;
     @ApiProperty()
     message: string;
-};
+}

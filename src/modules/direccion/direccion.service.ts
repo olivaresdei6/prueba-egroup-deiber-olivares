@@ -5,9 +5,7 @@ import {
     DepartamentoEntity,
     DireccionEntity,
     PaisEntity,
-    ParametroEntity
 } from "../../frameworks/database/mysql/entities";
-import { when } from "joi";
 import {
     ActualizarCiudadDto,
     ActualizarDepartamentoDto, ActualizarDireccionDto,
@@ -17,8 +15,6 @@ import {
     CrearDireccionDto,
     CrearPaisDto
 } from "./dto";
-import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
-import { camposDeBusquedaParaDireccion } from "./object/campos-de-busqueda";
 
 @Injectable()
 export class DireccionService {
@@ -119,9 +115,6 @@ export class DireccionService {
         return await this.servicioDeBaseDeDatos.ciudad.obtenerUnRegistroPor({where: {uuid}}, 'Ciudad');
     }
 
-    private async obtenerDireccionPorUUID(uuid: string): Promise<DireccionEntity> {
-        return await this.servicioDeBaseDeDatos.direccion.obtenerUnRegistroPor({where: {uuid}}, 'Direccion');
-    }
 
     private async obtenerPaisPorUUID(uuid: string): Promise<PaisEntity> {
         return await this.servicioDeBaseDeDatos.pais.obtenerUnRegistroPor({where: {uuid}}, 'Pais');

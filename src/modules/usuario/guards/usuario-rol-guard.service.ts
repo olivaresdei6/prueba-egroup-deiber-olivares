@@ -1,8 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import {IConexionDb} from '../../../frameworks/database/mysql/core/abstract';
+import { IConexionDb } from "../../../frameworks/database/mysql/core/abstract";
 import { PermisoRolEntity, UsuarioEntity } from "../../../frameworks/database/mysql/entities";
 import { ResultadoParametrosDeUnaRuta } from "../../../frameworks/database/mysql/core/interfaces/permisoInterface";
-import { parametrosRegistrados } from "../../parametro/objects/parametros-registrados";
 
 @Injectable()
 export class UsuarioRolGuard implements CanActivate {
@@ -26,7 +25,6 @@ export class UsuarioRolGuard implements CanActivate {
 
         throw new UnauthorizedException('No tienes permisos para acceder a este recurso');
 
-        return false;
     }
 
     private obtenerUsuarioAutenticado(context: ExecutionContext): UsuarioEntity {
@@ -65,8 +63,7 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     private async obtenerPermisosDelUsuario(roleId: number): Promise<ResultadoParametrosDeUnaRuta[]> {
-        const permisos = await this.servicioDeBaseDeDatos.permiso.obtenerPermisos(+roleId);
-        return permisos;
+        return await this.servicioDeBaseDeDatos.permiso.obtenerPermisos(+roleId);
     }
 
     private async validarToken(token: string, usuario: UsuarioEntity): Promise<boolean> {

@@ -1,13 +1,12 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
 import {
-    ParametroEntity, PermisoEntity,
+    PermisoEntity,
     PermisoModuloEntity,
     PermisoRolEntity,
     PermisoRutaEntity
 } from "../../frameworks/database/mysql/entities";
 import { CrearPermisoDto } from "./dto/crear-permiso.dto";
-import { PermisoModule } from "./permiso.module";
 import { ActualizarPermisoDto } from "./dto/actualizar-permiso.dto";
 import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 

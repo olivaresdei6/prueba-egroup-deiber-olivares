@@ -1,6 +1,6 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
-import { DepartamentoEntity, ImagenEntity } from "./index";
+import { DepartamentoEntity } from "./index";
 
 @Entity({name: 'pais'})
 export class PaisEntity {

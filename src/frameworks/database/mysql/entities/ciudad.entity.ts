@@ -8,7 +8,7 @@ import {
     PrimaryGeneratedColumn
 } from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
-import { DepartamentoEntity, DireccionEntity, ImagenEntity } from "./index";
+import { DepartamentoEntity, DireccionEntity } from "./index";
 
 @Entity({name: 'ciudad'})
 @Index('unq_name_departamento', ['nombre', 'departamento'], {unique: true })
@@ -24,7 +24,7 @@ export class CiudadEntity {
         comment: 'Identificador único de cada ciudad.abstract.ts'
     })
     id?: number;
-    
+
     @ApiProperty({
         description: 'UUID del registro',
         example: 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',

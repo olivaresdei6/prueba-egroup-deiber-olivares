@@ -171,7 +171,6 @@ export class ProductoService {
      * @private
      */
     private async crearProducto(crearDto: CrearProductoDto): Promise<{ status: number; message: string }> {
-        const {uuidCaracteristica1, uuidValorCaracteristica2, uuidValorCaracteristica1, uuidCaracteristica2} = crearDto;
         const dto = await this.construirDto(crearDto)
         await this.servicioDeBaseDeDatos.producto.crearRegistro(dto);
         return {

@@ -1,5 +1,5 @@
 import {ApiProperty} from '@nestjs/swagger';
-import {Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+import {Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
 import { UsuarioEntity } from "./";
 
 
