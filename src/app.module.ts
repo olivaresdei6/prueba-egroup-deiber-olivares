@@ -14,6 +14,7 @@ import { PermisoRolModule } from "./modules/permiso_rol/permiso_rol.module";
 import { PermisoModule } from "./modules/permiso/permiso.module";
 import { UsuarioModule } from "./modules/usuario/usuario.module";
 import { DireccionModule } from "./modules/direccion/direccion.module";
+import { ProductoModule } from "./modules/producto/producto.module";
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { DireccionModule } from "./modules/direccion/direccion.module";
       PermisoRolModule,
       PermisoModule,
       UsuarioModule,
-      DireccionModule
+      DireccionModule,
+      ProductoModule
   ],
   controllers: [AppController],
   providers: [AppService],

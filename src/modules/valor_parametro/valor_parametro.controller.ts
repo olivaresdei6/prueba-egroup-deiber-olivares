@@ -21,7 +21,6 @@ import { Auth } from "../usuario/decorators/auth.decorator";
 @Controller('valor_parametro')
 export class ValorParametroController {
     constructor(private readonly valorParametroService: ValorParametroService) {}
-    @Auth()
     @ApiResponse({ status: 201, description: 'Valor Parámetro creado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })

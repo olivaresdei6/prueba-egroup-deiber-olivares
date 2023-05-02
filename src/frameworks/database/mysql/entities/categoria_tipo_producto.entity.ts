@@ -1,11 +1,12 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { TipoProductoEntity } from "./tipo_producto.entity";
 import { CategoriaEntity } from "./categoria.entity";
 
 @Entity({ name: "categoria_tipo_producto" })
+@Index(["categoria", "tipoProducto"], { unique: true })
 export class CategoriaTipoProductoEntity {
-    @ApiProperty({
+    @ApiProperty( {
         name: "id_categoria",
         description: "Identificador de la categoría",
         type: "number",
@@ -33,8 +34,8 @@ export class CategoriaTipoProductoEntity {
     uuid?: string;
 
     @ApiProperty({
-        description: "Descripción de la categoría",
-        example: "Accesorios para todo tipo de ocasión",
+        description: "Descripción de la relación entre categoría y tipo de producto",
+        example: "Una categoría puede tener varios tipos de producto",
         uniqueItems: true
     })
     @Column({
@@ -79,10 +80,9 @@ export class CategoriaTipoProductoEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => "CURRENT_TIMESTAMP",
         onUpdate: "CURRENT_TIMESTAMP"
     })
     fechaActualizacion?: Date;
@@ -93,7 +93,7 @@ export class CategoriaTipoProductoEntity {
         nullable: false
     })
     @Column({
-        type: "tinyint",
+        type: "int",
         nullable: false,
         comment: "Estado del registro. 0: Inactivo, 1: Activo",
         default: 1

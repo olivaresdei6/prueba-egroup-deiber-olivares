@@ -1,2 +1,2 @@
 
-export const camposDeBusquedaGenericos = ['nombre', 'descripcion', 'pais', 'direccion']
+export const camposDeBusquedaGenericos = ['nombre', 'descripcion', 'observacion']

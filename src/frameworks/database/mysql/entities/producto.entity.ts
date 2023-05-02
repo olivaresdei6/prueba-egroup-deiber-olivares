@@ -11,7 +11,7 @@ export class ProductoEntity {
         description: 'Identificador de cada producto',
         type: 'number',
     })
-    @PrimaryGeneratedColumn({
+    @PrimaryGeneratedColumn('increment',{
         name: "id",
         type: "int",
         unsigned: true,
@@ -50,29 +50,16 @@ export class ProductoEntity {
     nombre!: string;
 
     @ApiProperty({
-        example: "TERMO",
-        description: "Tipo de producto",
-        uniqueItems: true
-    })
-    @Column({
-        type: "int",
-        nullable: false,
-        name: "id_tipo_producto",
-        comment: "Tipo de producto: TERMO, BOTELLA, etc"
-    })
-    idTipoProducto!: number;
-
-    @ApiProperty({
         example: "Damas, Caballeros y Niños",
         description: "Tipo de usuario",
     })
     @Column({
         type: "int",
-        nullable: false,
+        nullable: true,
         name: "id_tipo_usuario",
         comment: "Tipo de usuario: Damas, Caballeros y Niños"
     })
-    idTipoUsuario!: number;
+    idTipoUsuario?: number;
 
     @ApiProperty({
         example: 18,
@@ -87,7 +74,7 @@ export class ProductoEntity {
         name: "altura",
         comment: "Altura del producto"
     })
-    altura!: number;
+    altura?: number;
 
     @ApiProperty({
         example: 10,
@@ -102,8 +89,7 @@ export class ProductoEntity {
         scale: 2,
         comment: "Ancho del producto"
     })
-    ancho!: number;
-
+    ancho?: number;
 
     @ApiProperty({
         description: "Descripción del producto",
@@ -167,12 +153,11 @@ export class ProductoEntity {
     })
     @Column({
         type: "varchar",
-        length: 50,
+        length: 200,
         nullable: true,
-        name: "capacidad",
         comment: "Capacidad del producto"
     })
-    capacidad?: number;
+    capacidad?: string;
 
     @ApiProperty({
         description: "Peso del producto",
@@ -293,10 +278,9 @@ export class ProductoEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -307,7 +291,7 @@ export class ProductoEntity {
     @ManyToOne(() => TipoProductoEntity,
             tipoProducto => tipoProducto.id, {eager: true})
     @JoinColumn({name: "id_tipo_de_producto"})
-    producto: number | TipoProductoEntity;
+    tipoDeProducto!: number | TipoProductoEntity;
 
     @OneToMany(() => InventarioEntity, inventario => inventario.producto)
     inventario?: InventarioEntity[];

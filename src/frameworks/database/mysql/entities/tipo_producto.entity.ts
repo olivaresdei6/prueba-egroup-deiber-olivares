@@ -10,8 +10,8 @@ export class TipoProductoEntity {
         example: 1,
         description: 'Identificador de esta tabla'
     })
-    @PrimaryGeneratedColumn({type: 'smallint', unsigned: true, zerofill: true})
-    id: number;
+    @PrimaryGeneratedColumn('increment',{type: 'smallint', unsigned: true, zerofill: true})
+    id?: number;
 
     @ApiProperty({
         description: "UUID del tipo de producto",
@@ -37,7 +37,6 @@ export class TipoProductoEntity {
         nullable: false,
         unique: true,
         length: 200,
-        name: "nombre",
         comment: "Nombre del tipos de producto que existen en la base de datos."
     })
     nombre!: string;
@@ -51,10 +50,19 @@ export class TipoProductoEntity {
         type: "varchar",
         nullable: true,
         length: 500,
-        name: "descripcion",
         comment: "Descripción del parámetro. Se utiliza para describir el parámetro y su funcionalidad. No es obligatorio, pero se recomienda llenar este campo para facilitar la comprensión de la funcionalidad del parámetro"
     })
     descripcion?: string;
+
+    @ApiProperty({
+        description: 'Observaciones del tipo de producto',
+        example: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
+    })
+    @Column({
+        type: "varchar",
+        nullable: true,
+    })
+    observacion?: string;
 
     @ApiProperty({
         description: "Fecha de creación del registro",
@@ -75,10 +83,9 @@ export class TipoProductoEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -90,18 +97,18 @@ export class TipoProductoEntity {
     @Column({
         type: "int",
         nullable: false,
-        name: "estado",
+        default: 1,
         comment: "Estado del registro. 1. Activo, 2. Inactivo, O. Eliminado"
     })
     estado?: number;
 
-    @OneToMany(() => ProductoEntity, producto => producto.producto)
+    @OneToMany(() => ProductoEntity, producto => producto.tipoDeProducto)
     productos: ProductoEntity[];
 
     @OneToMany (()=> CategoriaTipoProductoEntity,
         categoriaTipoProducto =>
             categoriaTipoProducto.tipoProducto
     )
-    categoriasTipoProductos: CategoriaTipoProductoEntity[];
+    categoriasTipoProductos?: CategoriaTipoProductoEntity[];
 
 }

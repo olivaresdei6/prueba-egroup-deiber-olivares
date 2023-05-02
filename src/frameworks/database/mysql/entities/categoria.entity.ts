@@ -8,7 +8,7 @@ export class CategoriaEntity {
         example: 1,
         description: 'Identificador de la categoría',
     })
-    @PrimaryGeneratedColumn({
+    @PrimaryGeneratedColumn('increment',{
         type: "smallint",
         unsigned: true,
         comment: "Identificador de la categoría",
@@ -113,10 +113,9 @@ export class CategoriaEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
