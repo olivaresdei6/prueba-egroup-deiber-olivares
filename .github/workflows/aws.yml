@@ -80,6 +80,17 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
           
+      - name: Deregister old task definitions
+        run: |
+          # Set the AWS CLI output format
+          export AWS_DEFAULT_OUTPUT=json
+          # Get the current task definition family
+          TASK_DEFINITION_FAMILY=$(jq -r '.family' ${{ env.ECS_TASK_DEFINITION }})
+          # Get the active task definition ARNs
+          ACTIVE_TASK_DEFINITIONS=$(aws ecs list-task-definitions --family-prefix $TASK_DEFINITION_FAMILY --status ACTIVE)
+          # Deregister the active task definitions
+          echo $ACTIVE_TASK_DEFINITIONS | jq -r '.taskDefinitionArns[]' | xargs -I {} aws ecs deregister-task-definition --task-definition {}
+
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
