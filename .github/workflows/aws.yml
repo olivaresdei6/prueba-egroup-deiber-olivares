@@ -6,7 +6,7 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  ECR_REPOSITORY: 594261311179.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: prueba-egroup
   ECS_SERVICE: servicio-egroup
   ECS_CLUSTER: prueba-egroup
   ECS_TASK_DEFINITION: prueba-egroup-task-revision1.json
