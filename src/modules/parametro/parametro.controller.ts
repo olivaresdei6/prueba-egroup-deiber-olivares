@@ -43,6 +43,7 @@ export class ParametroController {
         return this.parametroService.obtenerTodosLosRegistros();
     }
 
+    @Auth()
     @ApiResponse({ status: 201, description: 'Parámetros encontrados correctamente.', type: ParametroEntity, isArray: true})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
