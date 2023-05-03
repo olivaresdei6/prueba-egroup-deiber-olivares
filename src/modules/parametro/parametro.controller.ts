@@ -2,7 +2,7 @@ import {
     Body,
     Controller,
     Get,
-    Param,
+    Param, ParseIntPipe,
     ParseUUIDPipe,
     Patch,
     Post,
@@ -14,12 +14,14 @@ import {ActualizarParametroDto} from './dto/actualizar-parametro.dto';
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ParametroEntity } from "../../frameworks/database/mysql/entities";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
+import { Auth } from "../usuario/decorators/auth.decorator";
 
 @ApiTags("Parametro")
 @Controller('parametro')
 export class ParametroController {
     constructor(private readonly parametroService: ParametroService) {}
 
+    @Auth()
     @ApiResponse({ status: 201, description: 'Parámetro creado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
@@ -30,7 +32,7 @@ export class ParametroController {
     }
     
     
-    
+    @Auth()
     @ApiResponse({ status: 201, description: 'Parámetros encontrados correctamente.', type: ParametroEntity, isArray: true})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
@@ -64,9 +66,9 @@ export class ParametroController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El parámetro no existe.' })
-    @Get(':uuid')
-    obtenerUnRegistro(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<ParametroEntity> {
-        return this.parametroService.obtenerUnRegistro(uuid);
+    @Get(':id')
+    obtenerUnRegistro(@Param('id', ParseIntPipe) id: number): Promise<ParametroEntity> {
+        return this.parametroService.obtenerUnRegistro(id);
     }
     
     

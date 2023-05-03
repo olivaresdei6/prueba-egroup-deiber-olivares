@@ -62,9 +62,5 @@ export class CrearUsuarioDto {
     })
     @IsString({ message: 'La contraseña debe ser un texto' })
     @IsNotEmpty({ message: 'La contraseña no puede estar vacía' })
-    @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*_?&-]{8,}$/, {
-        message:
-            'La contraseña debe tener al menos 8 caracteres y contener al menos una letra mayúscula, una letra minúscula y un número',
-    })
     password!: string;
 }

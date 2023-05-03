@@ -4,7 +4,8 @@ import {UsuarioRolGuard} from "../guards/usuario-rol-guard.service";
 
 export const Auth = () => {
     return  applyDecorators(
-        UseGuards(AuthGuard('jwt'),
+        UseGuards(
+            AuthGuard('jwt'),
             UsuarioRolGuard
         )
     )

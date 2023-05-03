@@ -1,0 +1,166 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:594261311179:task-definition/prueba-egroup-task:1",
+    "containerDefinitions": [
+        {
+            "name": "prueba-egroup",
+            "image": "594261311179.dkr.ecr.us-east-1.amazonaws.com/prueba-egroup:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "prueba-egroup-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "EMAIL_PORT",
+                    "value": "2525"
+                },
+                {
+                    "name": "DATABASE_NAME",
+                    "value": "prueba-egroup"
+                },
+                {
+                    "name": "DATABASE_HOST",
+                    "value": "prueba-e-gropup.ckhufutibjol.us-east-1.rds.amazonaws.com"
+                },
+                {
+                    "name": "STAGE",
+                    "value": "prod"
+                },
+                {
+                    "name": "DATABASE_PORT",
+                    "value": "3306"
+                },
+                {
+                    "name": "URL_FRONT",
+                    "value": "https//api.prueba-egroup.deiberolivares.com/api/v1"
+                },
+                {
+                    "name": "EMAIL_USER",
+                    "value": "fe2b1dd5ffabf0"
+                },
+                {
+                    "name": "EMAIL_HOST",
+                    "value": "sandbox.smtp.mailtrap.io"
+                },
+                {
+                    "name": "EMAIL_FROM",
+                    "value": "info@egroup.com.co"
+                },
+                {
+                    "name": "URL_CONFIRMATION",
+                    "value": "usuario/activar"
+                },
+                {
+                    "name": "URL_API",
+                    "value": "https//api.prueba-egroup.deiberolivares.com/api/v1"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "value": "f2gZyeGha1irlTNvpAU!8yO*Y@^c@4jT6a5T1sT7Dx!a$4s2Wq"
+                },
+                {
+                    "name": "EMAIL_PASSWORD",
+                    "value": "1ca3fcb56e4128"
+                },
+                {
+                    "name": "DATABASE_USER",
+                    "value": "deiber"
+                },
+                {
+                    "name": "DATABASE_PASSWORD",
+                    "value": "MrBLOkeHbm3mOm2SGZix"
+                }
+            ],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/prueba-egroup-task",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        },
+        {
+            "name": "aws-otel-collector",
+            "image": "public.ecr.aws/aws-observability/aws-otel-collector:v0.28.0",
+            "cpu": 0,
+            "portMappings": [],
+            "essential": true,
+            "command": [
+                "--config=/etc/ecs/ecs-cloudwatch-xray.yaml"
+            ],
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/ecs-aws-otel-sidecar-collector",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "family": "prueba-egroup-task",
+    "executionRoleArn": "arn:aws:iam::594261311179:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2023-05-03T02:53:27.680Z",
+    "registeredBy": "arn:aws:iam::594261311179:root",
+    "tags": []
+}
