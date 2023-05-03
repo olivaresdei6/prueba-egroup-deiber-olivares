@@ -79,12 +79,7 @@ jobs:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
-
-      - name: Register new task definition
-        run: |
-          CONTAINER_DEFINITIONS=$(jq '.containerDefinitions' ${{ steps.task-def.outputs.task-definition }})
-          aws ecs register-task-definition --family ${{ env.ECS_SERVICE }} --container-definitions "$CONTAINER_DEFINITIONS"
-
+          
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
