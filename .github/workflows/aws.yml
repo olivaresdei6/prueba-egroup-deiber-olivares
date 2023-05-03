@@ -22,61 +22,73 @@ jobs:
     environment: production
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-      with: 
-        fetch-depth: 0
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
 
-    - name: Git Semantic Version
-      uses: PaulHatch/semantic-version@v5.0.3
-      with:
-        major_pattern: "major:"
-        minor_pattern: "feat:"
-        version_format: "${major}.${minor}.${patch}-prerelease${increment}"
-      id: version
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v5.0.3
+        with:
+          major_pattern: "major:"
+          minor_pattern: "feat:"
+          version_format: "${major}.${minor}.${patch}-prerelease${increment}"
+        id: version
 
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
 
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        NEW_VERSION: ${{steps.version.outputs.version}}
-      run: |
-        docker buildx create --name mybuilder --driver docker-container --bootstrap --use
-        docker buildx build --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6 -t $ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION --push .
-        docker buildx build --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest --push .
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION" >> $GITHUB_OUTPUT
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
-    - name: Install jq
-      run: |
-        sudo apt-get install jq
-    - name: Register new task definition
-      run: |
-        CONTAINER_DEFINITIONS=$(jq '.containerDefinitions' ${{ steps.task-def.outputs.task-definition }})
-        aws ecs register-task-definition --family ${{ env.CONTAINER_NAME }} --network-mode awsvpc --container-definitions "$CONTAINER_DEFINITIONS" --requires-compatibilities FARGATE
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          NEW_VERSION: ${{steps.version.outputs.version}}
+        run: |
+          docker buildx create --name mybuilder --driver docker-container --bootstrap --use
+          docker buildx build --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6 -t $ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION --push .
+          docker buildx build --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest --push .
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION" >> $GITHUB_OUTPUT
 
-    - name: Deploy new task definition
-      run: |
-        TASK_REVISION=$(aws ecs describe-task-definition --task-definition ${{ env.CONTAINER_NAME }} --query 'taskDefinition.revision' --output text)
-        aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition ${{ env.CONTAINER_NAME }}:$TASK_REVISION --force-new-deployment
-        aws ecs wait services-stable --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }}
+      - name: Clean up old tasks and images
+        run: |
+          # Set the AWS CLI output format
+          export AWS_DEFAULT_OUTPUT=json
+          
+          # Remove stopped tasks
+          aws ecs list-tasks --cluster ${{ env.ECS_CLUSTER }} --desired-status STOPPED | jq '.taskArns[]' | xargs -I {} aws ecs stop-task --cluster ${{ env.ECS_CLUSTER }} --task {}
+          
+          # Get unused images
+          UNUSED_IMAGES=$(aws ecr describe-images --repository-name ${{ env.ECR_REPOSITORY }} | jq '.imageDetails[] | select((.imageTags[0] != "latest") and (.imageTags[0] != "${{ steps.build-image.outputs.image }}")) | .imageDigest')
+          
+          # Remove unused images
+          for image in $UNUSED_IMAGES; do
+            aws ecr batch-delete-image --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image
+            done
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
