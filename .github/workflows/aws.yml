@@ -67,15 +67,16 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
-
-
+    - name: Install jq
+      run: |
+        sudo apt-get install jq
     - name: Register new task definition
       run: |
-        aws ecs register-task-definition --cli-input-json file://${{ steps.task-def.outputs.task-definition }}
+        CONTAINER_DEFINITIONS=$(jq '.containerDefinitions' ${{ steps.task-def.outputs.task-definition }})
+        aws ecs register-task-definition --family ${{ env.CONTAINER_NAME }} --network-mode awsvpc --container-definitions "$CONTAINER_DEFINITIONS" --requires-compatibilities FARGATE
 
     - name: Deploy new task definition
       run: |
         TASK_REVISION=$(aws ecs describe-task-definition --task-definition ${{ env.CONTAINER_NAME }} --query 'taskDefinition.revision' --output text)
         aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --task-definition ${{ env.CONTAINER_NAME }}:$TASK_REVISION --force-new-deployment
         aws ecs wait services-stable --cluster ${{ env.ECS_CLUSTER }} --services ${{ env.ECS_SERVICE }}
-
