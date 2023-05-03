@@ -5,6 +5,7 @@
             "name": "prueba-egroup",
             "image": "594261311179.dkr.ecr.us-east-1.amazonaws.com/prueba-egroup:latest",
             "cpu": 0,
+            "memory": 1024,
             "portMappings": [
                 {
                     "name": "prueba-egroup-80-tcp",
