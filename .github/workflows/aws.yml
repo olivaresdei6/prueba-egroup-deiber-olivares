@@ -61,21 +61,10 @@ jobs:
           docker buildx build --platform linux/amd64,linux/amd64/v2,linux/amd64/v3,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/mips64le,linux/mips64,linux/arm/v7,linux/arm/v6 -t $ECR_REGISTRY/$ECR_REPOSITORY:latest --push .
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Clean up old tasks and images
+      - name: Install jq
         run: |
-          # Set the AWS CLI output format
-          export AWS_DEFAULT_OUTPUT=json
-          
-          # Remove stopped tasks
-          aws ecs list-tasks --cluster ${{ env.ECS_CLUSTER }} --desired-status STOPPED | jq '.taskArns[]' | xargs -I {} aws ecs stop-task --cluster ${{ env.ECS_CLUSTER }} --task {}
-          
-          # Get unused images
-          UNUSED_IMAGES=$(aws ecr describe-images --repository-name ${{ env.ECR_REPOSITORY }} | jq '.imageDetails[] | select((.imageTags[0] != "latest") and (.imageTags[0] != "${{ steps.build-image.outputs.image }}")) | .imageDigest')
-          
-          # Remove unused images
-          for image in $UNUSED_IMAGES; do
-            aws ecr batch-delete-image --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image
-            done
+          sudo apt-get install jq
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -84,6 +73,10 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
+      - name: Register new task definition
+        run: |
+          CONTAINER_DEFINITIONS=$(jq '.containerDefinitions' ${{ steps.task-def.outputs.task-definition }})
+          aws ecs register-task-definition --family ${{ env.ECS_SERVICE }} --container-definitions "$CONTAINER_DEFINITIONS"
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -92,3 +85,19 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
+
+      - name: Clean up old tasks and images
+        run: |
+          # Set the AWS CLI output format
+          export AWS_DEFAULT_OUTPUT=json
+
+          # Remove stopped tasks
+          aws ecs list-tasks --cluster ${{ env.ECS_CLUSTER }} --desired-status STOPPED | jq '.taskArns[]' | xargs -I {} aws ecs stop-task --cluster ${{ env.ECS_CLUSTER }} --task {}
+
+          # Get unused images
+          UNUSED_IMAGES=$(aws ecr describe-images --repository-name ${{ env.ECR_REPOSITORY }} | jq '.imageDetails[] | select((.imageTags[0] != "latest") and (.imageTags[0] != "${{ steps.build-image.outputs.image }}")) | .imageDigest')
+
+          # Remove unused images
+          for image in $UNUSED_IMAGES; do
+            aws ecr batch-delete-image --repository-name ${{ env.ECR_REPOSITORY }} --image-ids imageDigest=$image
+          done
