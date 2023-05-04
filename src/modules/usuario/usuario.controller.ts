@@ -76,7 +76,6 @@ export class UsuarioController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron usuarios registrados' })
-    @Auth()
     @Get()
     obtenerTodosLosUsuarios()  {
         return this.usuarioService.obtenerTodosLosUsuarios();

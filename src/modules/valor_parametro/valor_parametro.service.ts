@@ -21,8 +21,15 @@ export class ValorParametroService {
         }
     }
     
-    async obtenerTodosLosRegistros(): Promise<ValorParametroEntity[]> {
-        return await this.servicioDeBaseDeDatos.valorParametro.obtenerRegistros();
+    async obtenerTodosLosRegistros(uuid:string): Promise<ValorParametroEntity[]> {
+        const idParametro = await this.obtenerIdParametroPorUUID(uuid);
+        const valoresParametros =  await this.servicioDeBaseDeDatos.valorParametro.obtenerRegistros()
+        if (valoresParametros) {
+            // @ts-ignore
+            return valoresParametros.filter(valor => valor.parametro.id === idParametro);
+        } else {
+            throw new BadRequestException('No se encontraron valores para el parámetro');
+        }
     }
     
     async obtenerUnRegistro(uuid: string) {

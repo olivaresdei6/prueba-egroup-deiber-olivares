@@ -13,7 +13,6 @@ export class PermisoRutaService {
 
     async crearRegistro(crearPermisoRutaDto: CrearPermisoRutaDto)  {
         const valorParametro = await this.obtenerValorParametroPorUuid(crearPermisoRutaDto.uuidMetodoHttp);
-        console.log(valorParametro.nombre);
 
         //@ts-ignore
         if(valorParametro && valorParametro.parametro.nombre === parametrosRegistrados.metodosHttp){
@@ -24,6 +23,8 @@ export class PermisoRutaService {
                     message: 'Permiso - Ruta creada correctamente',
                 }
             }
+        }else {
+            throw new BadRequestException('El método http enviado no es válido.');
         }
     }
 
@@ -103,6 +104,8 @@ export class PermisoRutaService {
                 status: 201,
                 message: 'Ruta actualizada correctamente',
             }
+        } else {
+            throw new BadRequestException('Error al actualizar la ruta. Datos incorrectos');
         }
     }
 

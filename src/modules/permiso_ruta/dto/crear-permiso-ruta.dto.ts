@@ -20,7 +20,6 @@ export class CrearPermisoRutaDto {
         required: true,
     })
     @IsString({ message: 'La ubicación de la ruta debe ser un string' })
-    @MinLength(3, { message: 'La ubicación de la ruta debe tener al menos 3 caracteres' })
     @MaxLength(100, { message: 'La ubicación de la ruta debe tener máximo 50 caracteres' })
     @IsOptional()
     ruta?: string;

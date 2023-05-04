@@ -42,12 +42,8 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
      * @param lanzarExepcion
      */
     async obtenerUnRegistroPor(opcionesDeConsultas: FindOneOptions<T>, nombreDeLaEntidad: string, lanzarExepcion?: boolean): Promise<T> {
-        console.log(lanzarExepcion);
         nombreDeLaEntidad = nombreDeLaEntidad ? nombreDeLaEntidad : this._repositorio.metadata.name;
         const entidad: T = await this._repositorio.findOne(opcionesDeConsultas);
-        // Se ontiene el codigo where de la consulta
-        const query = this._repositorio.createQueryBuilder().getParameters();
-        console.log(query);
         if (!entidad && lanzarExepcion) {
             if (!entidad) throw new NotFoundException(`No se encontró el registro de ${nombreDeLaEntidad} en la base de datos.`);
             // @ts-ignore
@@ -67,8 +63,6 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
     public async obtenerRegistrosPor(where: FindOptionsWhere<T> | FindOptionsWhere<T>[], options?: FindOneOptions<T>): Promise<T[]> {
         try {
             const select = options ? options.select : [];
-            // Se imprime el código SQL que se ejecuta.
-            console.log(this._repositorio.createQueryBuilder().where(where).getSql());
             return await this._repositorio.find({ where, select});
         } catch (e) {
             throw new BadRequestException('Los datos enviados no son correctos.');
@@ -97,7 +91,6 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
             return instanciaDeLaEntidad;
 
         } catch (error) {
-            console.log(error);
             if (error.code === 'ER_DUP_ENTRY') {
                 throw new BadRequestException(`Ya existe un registro con el mismo nombre.`);
             }

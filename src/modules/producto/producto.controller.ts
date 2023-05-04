@@ -77,7 +77,6 @@ export class ProductoController {
         let {limite, pagina, busqueda, campo} = parametrosPaginado;
         limite = limite ? limite: 100;
         pagina = pagina ? pagina: 2;
-        console.log('Hola');
         return this.productoService.obtenerRegistrosPaginados(limite, pagina, busqueda, campo);
     }
 

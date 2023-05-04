@@ -21,9 +21,11 @@ import { CrearPermisoRutaDto } from "./dto/crear-permiso-ruta.dto";
 import { PermisoRutaService } from "./permiso_ruta.service";
 import { CrearRelacionRutaParametroDto } from "./dto/crear-relacion-ruta-parametro.dto";
 import { ActualizarRelacionRutaParametroDto } from "./dto/actualizar-relacion-ruta-parametro.dto";
+import { Auth } from "../usuario/decorators/auth.decorator";
 
 @ApiTags("Permiso - rutas")
 @Controller('permiso_ruta')
+@Auth()
 export class PermisoRutaController {
     constructor(private readonly permisoRutaService: PermisoRutaService) {}
 

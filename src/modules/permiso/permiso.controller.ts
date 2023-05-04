@@ -14,6 +14,7 @@ import { PermisoEntity } from "../../frameworks/database/mysql/entities";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
 import { CrearPermisoDto } from "./dto/crear-permiso.dto";
 import { ActualizarPermisoDto } from "./dto/actualizar-permiso.dto";
+import { Auth } from "../usuario/decorators/auth.decorator";
 
 @ApiTags("Permiso")
 @Controller('permiso')
@@ -24,6 +25,7 @@ export class PermisoController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post()
     creaarRegistro(@Body() crearPermisoDto: CrearPermisoDto){
         return this.permisoService.crearRegistro(crearPermisoDto);
@@ -36,34 +38,18 @@ export class PermisoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron permisos.' })
+    @Auth()
     @Get()
     obtenerTodosLosRegistros(): Promise<PermisoEntity[]>  {
         return this.permisoService.obtenerTodosLosRegistros();
     }
-
-    @ApiResponse({ status: 201, description: 'Permisos encontrados correctamente.', type: PermisoEntity, isArray: true})
-    @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
-    @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
-    @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
-    @ApiResponse({ status: 404, description: 'Not Found: No se encontraron permisos.' })
-    @Get('paginado')
-    @UseInterceptors(PaginacionInterceptor)
-    @ApiQuery({name: 'pagina', required: true, type: Number})
-    @ApiQuery({name: 'limite', required: false, type: Number})
-    @ApiQuery({name: 'busqueda', required: false, type: String})
-    @ApiQuery({name: 'campo', required: false, type: String})
-    obtenerRegistrosPaginados(@Query() parametrosConsulta) {
-        const {limite, pagina, busqueda, campo} = parametrosConsulta;
-        return this.permisoService.obtenerRegistrosPaginados(limite, pagina, busqueda, campo);
-    }
-    
-    
     
     @ApiResponse({ status: 201, description: 'Permiso encontrado correctamente.', type: PermisoEntity})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El Permiso no existe.' })
+    @Auth()
     @Get(':uuid')
     obtenerUnRegistro(@Param('uuid', ParseUUIDPipe) uuid: string): Promise<PermisoEntity> {
         return this.permisoService.obtenerUnRegistro(uuid);
@@ -76,6 +62,7 @@ export class PermisoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El Permiso no existe.' })
+    @Auth()
     @Patch(':uuid')
     actualizarRegistro(@Param('uuid', ParseUUIDPipe) uuid:string, @Body() actualizarPermisoDto: ActualizarPermisoDto) {
         return this.permisoService.actualizarRegistro(uuid, actualizarPermisoDto);

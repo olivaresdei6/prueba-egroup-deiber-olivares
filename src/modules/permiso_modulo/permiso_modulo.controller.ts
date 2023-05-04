@@ -15,6 +15,7 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 import { PermisoModuloService } from "./permiso_modulo.service";
 import { ActualizarPermisoModuloDto } from "./dto/actualizar-permiso-modulo.dto";
 import { CrearPermisoModuloDto } from "./dto/crear-permiso-modulo.dto";
+import { Auth } from "../usuario/decorators/auth.decorator";
 
 @ApiTags("Modulos de permisos")
 @Controller('permiso_modulo')
@@ -25,6 +26,7 @@ export class PermisoModuloController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post()
     crearRegistro(@Body() crearPermisoModuloDto: CrearPermisoModuloDto) {
         return this.permisoModuloService.crearRegistro(crearPermisoModuloDto);
@@ -36,6 +38,7 @@ export class PermisoModuloController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El modulo de permiso no existe.' })
+    @Auth()
     @Get()
     obtenerTodosLosRegistros(): Promise<PermisoModuloEntity[]>  {
         return this.permisoModuloService.obtenerTodosLosRegistros();
@@ -46,6 +49,7 @@ export class PermisoModuloController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron modulos de permisos.' })
+    @Auth()
     @Get('/paginado')
     @UseInterceptors(PaginacionInterceptor)
     @ApiQuery({name: 'pagina', required: true, type: Number})
@@ -63,8 +67,10 @@ export class PermisoModuloController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El modulo de permiso no existe.' })
+    @Auth()
     @Get(':uuid')
-    obtenerUnRegistro(@Param('uuid', ParseUUIDPipe) uuid): Promise<PermisoModuloEntity>  {
+    obtenerUnRegistro(@Param('uuid', ParseUUIDPipe) uuid:string): Promise<PermisoModuloEntity>  {
+        console.log(uuid);
         return this.permisoModuloService.obtenerUnRegistro(uuid)
     }
 
@@ -75,6 +81,7 @@ export class PermisoModuloController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El modulo de permiso no existe.' })
+    @Auth()
     @Patch(':uuid')
     actualizarRegistro(@Param('uuid', ParseUUIDPipe) uuid, @Body() actualizarPermisoModuloDto: ActualizarPermisoModuloDto) {
         return this.permisoModuloService.actualizarRegistro(uuid, actualizarPermisoModuloDto);

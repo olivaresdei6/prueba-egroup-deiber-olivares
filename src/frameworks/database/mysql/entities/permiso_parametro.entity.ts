@@ -53,7 +53,7 @@ export class PermisoParametroEntity {
     })
     @Column('boolean', {
         nullable: false,
-        default: true,
+        default: false,
         name: 'es_requerido',
         comment: 'Determina si el parámetro es obligatorio, devolviendo true o false'
     })

@@ -35,7 +35,13 @@ export class PermisoModuloService {
     }
 
     async obtenerUnRegistro(uuid: string): Promise<PermisoModuloEntity> {
-        return await this.servicioDeBaseDeDatos.permisoModulo.obtenerUnRegistroPor({where: {uuid}}, 'Modulo De Permiso');
+
+            const respuesta =  await this.servicioDeBaseDeDatos.permisoModulo.obtenerUnRegistroPor({where: {uuid}}, 'Modulo De Permiso');
+            if (respuesta) {
+                return respuesta;
+            }else {
+                throw new BadRequestException('No se encontró el modulo de permiso');
+            }
     }
 
     async actualizarRegistro(uuid: string, actualizarPermisoModuloDto: ActualizarPermisoModuloDto)  {

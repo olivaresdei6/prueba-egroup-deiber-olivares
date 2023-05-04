@@ -33,14 +33,18 @@ export class UsuarioService {
             {where: {nombre: rol}}, 'Rol',
         );
         await this.servicioDeBaseDeDatos.usuario.crearRegistro({
-            ...crearUsuarioDto, password: passwordEncriptada, rol: tipoUsuario, codigoAutenticacion
+            ...crearUsuarioDto, password: passwordEncriptada, rol: tipoUsuario, codigoAutenticacion, estaActivo: true
         });
-        const isSendEmail = await this.emailService.userMail.sendConfirmationEmail(crearUsuarioDto.correo, crearUsuarioDto.nombre, codigoAutenticacion, this.mailerService);
-        if (isSendEmail) {
+        // const isSendEmail = await this.emailService.userMail.sendConfirmationEmail(crearUsuarioDto.correo, crearUsuarioDto.nombre, codigoAutenticacion, this.mailerService);
+        /*if (isSendEmail) {
             return {
                 status: 201,
                 message: 'Usuario creado correctamente. Revisa mailtrap para activar tu cuenta',
             }
+        }*/
+        return {
+            status: 201,
+            message: 'Usuario creado correctamente'
         }
 
     }
@@ -64,7 +68,6 @@ export class UsuarioService {
         const usuarioEncontrado = await this.servicioDeBaseDeDatos.usuario.obtenerUnRegistroPor(
             {where: {correo}}, 'Usuario',
         );
-        console.log(usuarioEncontrado);
         if (!usuarioEncontrado) {
             throw new NotFoundException('No se encontro un usuario en el sistema con los datos ingresados');
         }
@@ -126,7 +129,6 @@ export class UsuarioService {
         const token  = this.getToken({uuid});
         const { exp } = await this.extraerDataToken(token);
         const fechaDeExpiracionToken = new Date(exp * 1000);
-        console.log(fechaDeExpiracionToken);
         await this.servicioDeBaseDeDatos.registroDeAcceso.crearRegistro({
             fechaDeExpiracionToken,
             token,
@@ -138,7 +140,6 @@ export class UsuarioService {
 
     public async cerrarSesion(token: string) {
         const {id, fechaDeSalida}: RegistroDeAccesoEntity = await this.servicioDeBaseDeDatos.registroDeAcceso.obtenerUnRegistroPor({where: {token}}, 'Registro de acceso');
-        console.log(fechaDeSalida);
         if(fechaDeSalida) {
             throw new BadRequestException('La sesion ya ha sido cerrada anteriormente');
         }else{

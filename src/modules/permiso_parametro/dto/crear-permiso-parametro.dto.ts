@@ -20,7 +20,8 @@ export class CrearPermisoParametroDto {
         required: true,
     })
     @IsBoolean({ message: 'El campo esRequerido debe ser booleano' })
-    esRequerido!: boolean;
+    @IsOptional()
+    esRequerido?: boolean;
 
     @ApiProperty({
         description: 'Tipo de dato del parámetro',

@@ -9,8 +9,8 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        // Para extraer las llaves de un objeto
-        const parametros = Object.keys(context.switchToHttp().getRequest().query);
+        const parametros = Object.keys(context.switchToHttp().getRequest().params);
+        const querys  = Object.keys(context.switchToHttp().getRequest().query);
         const usuario: UsuarioEntity = this.obtenerUsuarioAutenticado(context);
         const token: string = this.obtenerTokenDeLaSolicitud(context);
         const metodo: string = this.obtenerElMetodoDeLaSolicitud(context);
@@ -18,8 +18,7 @@ export class UsuarioRolGuard implements CanActivate {
         const rolId: number = await this.obtenerElUuidDelRol(usuario);
         const permisos: ResultadoParametrosDeUnaRuta[] = await this.obtenerPermisosDelUsuario(rolId);
         const isTokenValido: boolean = await this.validarToken(token, usuario);
-
-        if (isTokenValido && this.verificarSolicitud(permisos, metodo, ruta, parametros)) {
+        if (isTokenValido && this.verificarSolicitud(permisos, metodo, ruta, parametros, querys)) {
             return true;
         }
 
@@ -33,8 +32,9 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     private obtenerTokenDeLaSolicitud(context: ExecutionContext): string {
+        console.log(context.switchToHttp().getRequest());
         const request = context.switchToHttp().getRequest();
-        return request.rawHeaders[1].split(' ')[1];
+        return request.rawHeaders[3].split(' ')[1] || request.rawHeaders[1].split(' ')[1];
     }
 
     private obtenerElMetodoDeLaSolicitud(context: ExecutionContext): string {
@@ -43,8 +43,16 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     private obtenerLaRutaSolicitada(context: ExecutionContext): string {
-        const request = context.switchToHttp().getRequest();
-        return request.route.path;
+        const querys  = Object.keys(context.switchToHttp().getRequest().query);
+        const parametros = Object.keys(context.switchToHttp().getRequest().params);
+        let url = context.switchToHttp().getRequest()._parsedUrl.pathname;
+        if (querys.length > 0) {
+            return url.split('?')[0];
+        }
+        else if (parametros.length > 0) {
+            return context.switchToHttp().getRequest().route.path.replace(':uuid', '');
+        }
+        return url+'/';
     }
 
     private async obtenerElUuidDelRol(usuario: UsuarioEntity): Promise<number> {
@@ -83,20 +91,35 @@ export class UsuarioRolGuard implements CanActivate {
         return Boolean(registroDeAcceso && fechaDeExpiracionDelToken > new Date());
     }
 
-    private verificarSolicitud(permisos: ResultadoParametrosDeUnaRuta[], metodoHttp: string, ruta: string, parametros: string[]): boolean {
-        parametros = parametros.length === 0 ? [ruta.split('/:')[1]] : parametros ;
-        ruta = ruta.includes('/:') ? ruta.split('/:')[0] : ruta;
-        const permiso = permisos.find(permiso => permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && parametros.length <= permiso.parametros.length);
+    private verificarSolicitud(permisos: ResultadoParametrosDeUnaRuta[], metodoHttp: string, ruta: string, parametros: string[], queries: string[]): boolean {
+        const permiso = permisos.find(permiso => {
+            console.log('RUTA SOLICITADA', ruta, metodoHttp, parametros);
+            console.log('RUTA PERMITIDA', permiso.ruta, permiso.metodoHttp, permiso.parametros);
+            console.log('SON IGUALES', permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && parametros.length <= permiso.parametros.length);
+            console.log('======================================================================================================');
+            console.log('======================================================================================================');
+            return permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && parametros.length <= permiso.parametros.length
+        });
         if (!permiso) return false;
 
-        for (const parametro of parametros) {
-            let isParametroValido = false;
-            if (!permiso.parametros.some(parametroRegistrado => parametroRegistrado.nombre === parametro)) {
-                isParametroValido = false;
-                break;
+        if (queries.length > 0) {
+            for (const query of queries) {
+                let isParametroValido = false;
+                if (!permiso.parametros.some(parametroRegistrado => parametroRegistrado.nombre === query)) {
+                    isParametroValido = false;
+                    break;
+                }
             }
         }
-
+        else {
+            for (const parametro of permiso.parametros) {
+                let isParametroValido = false;
+                if (!queries.some(query => query === parametro.nombre)) {
+                    isParametroValido = false;
+                    break;
+                }
+            }
+        }
         return true;
     }
 }

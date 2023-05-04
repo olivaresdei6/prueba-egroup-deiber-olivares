@@ -22,6 +22,9 @@ export class PermisoService {
             this.obtenerIdModulo(uuidModulo),
             this.obtenerRol(uuidRol)
         ]);
+        if (!idRuta || !idModulo || !idRol) {
+            throw new BadRequestException('No se encontró la ruta, el módulo o el rol enviados');
+        }
         await this.servicioDeBaseDeDatos.permiso.crearRegistro({
             ...crearPermisoDto,
             ruta: idRuta.id,
@@ -38,16 +41,6 @@ export class PermisoService {
         return await this.servicioDeBaseDeDatos.permiso.obtenerRegistros();
     }
 
-    async obtenerRegistrosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
-        if (campo && !camposDeBusquedaGenericos.includes(campo.toLowerCase())) {
-            throw new BadRequestException('El campo enviado no es permitido. Se esperaba uno de estos: ' + camposDeBusquedaGenericos.join(', '));
-        }
-        else if (busqueda && campo) {
-            return await this.servicioDeBaseDeDatos.permiso.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
-        }else {
-            return await this.servicioDeBaseDeDatos.permiso.obtenerRegistrosPaginados({limite, pagina});
-        }
-    }
 
     async obtenerUnRegistro(uuid: string): Promise<PermisoEntity> {
         return await this.servicioDeBaseDeDatos.permiso.obtenerUnRegistroPor({where: {uuid}}, 'Permiso');

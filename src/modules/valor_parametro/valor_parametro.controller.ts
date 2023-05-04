@@ -25,6 +25,7 @@ export class ValorParametroController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post()
     crearRegistro(@Body() crearValorParametroDto: CrearValorParametroDto) {
         return this.valorParametroService.crearRegistro(crearValorParametroDto);
@@ -36,9 +37,9 @@ export class ValorParametroController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El Valor parámetro no existe.' })
-    @Get()
-    obtenerTodosLosRegistros(): Promise<ValorParametroEntity[]>  {
-        return this.valorParametroService.obtenerTodosLosRegistros();
+    @Get('parametro/:uuid')
+    obtenerTodosLosRegistros(@Param('uuid') uuid:string ): Promise<ValorParametroEntity[]>  {
+        return this.valorParametroService.obtenerTodosLosRegistros(uuid);
     }
 
     @ApiResponse({ status: 201, description: 'Valores Parámetros encontrados correctamente.', type: ParametroEntity, isArray: true})
@@ -64,7 +65,7 @@ export class ValorParametroController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El Valor parámetro no existe.' })
-
+    @Auth()
     @Get(':uuid')
     obtenerUnRegistro(@Param('uuid', ParseUUIDPipe) uuid): Promise<ValorParametroEntity>  {
         return this.valorParametroService.obtenerUnRegistro(uuid)

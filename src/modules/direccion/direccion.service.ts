@@ -27,8 +27,6 @@ export class DireccionService {
             entidad = await this.servicioDeBaseDeDatos.pais.crearRegistro(crearDto);
         } else if (crearDto instanceof CrearDepartamentoDto) {
             const pais = await this.obtenerPaisPorUUID(crearDto.uuidPais);
-            console.log(pais);
-            console.log(crearDto);
             entidad = await this.servicioDeBaseDeDatos.departamento.crearRegistro({...crearDto, pais: pais.id});
         } else if (crearDto instanceof CrearCiudadDto) {
             const departamento = await this.obtenerDepartamentoPorUUID(crearDto.uuidDepartamento);
@@ -107,7 +105,6 @@ export class DireccionService {
     }
 
     private async obtenerDepartamentoPorUUID(uuid: string): Promise<DepartamentoEntity> {
-        console.log(uuid);
         return await this.servicioDeBaseDeDatos.departamento.obtenerUnRegistroPor({where: {uuid}}, 'Departamento');
     }
 

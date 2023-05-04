@@ -20,6 +20,8 @@ export class PermisoParametroService {
                     message: 'Permiso Parametro creado correctamente',
                 }
             }
+        }else {
+            throw new BadRequestException('El tipo de dato enviado no es permitido. Se esperaba uno de estos: ' + parametrosRegistrados.tiposDeDatosParaParametrosDeRutas);
         }
     }
 
@@ -29,7 +31,6 @@ export class PermisoParametroService {
            const tipoDeDato = await this.servicioDeBaseDeDatos.valorParametro.obtenerUnRegistroPor({
                where: { id: parametroDeRuta.tipoDeDato } }, 'Tipo De Dato', false
            );
-            console.log(tipoDeDato);
            return {
                ...parametroDeRuta,
                tipoDeDato

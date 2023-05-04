@@ -59,7 +59,6 @@ export class ProductoService {
 
 
     async actualizarRegistro(uuid: string, actualizarDto: ActualizarTipoDeProductoDto | ActualizarCategoriaTipoDeProductoDto | ActualizarProductoDto | ActualizarCategoriaDto) {
-        console.log();
         let entidad: TipoProductoEntity | CategoriaTipoProductoEntity | ProductoEntity | CategoriaEntity;
         switch (actualizarDto.constructor) {
             case ActualizarTipoDeProductoDto:
