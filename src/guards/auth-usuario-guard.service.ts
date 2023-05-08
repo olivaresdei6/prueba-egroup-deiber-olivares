@@ -35,6 +35,7 @@ export class AuthUsuarioGuard implements CanActivate {
     private obtenerTokenDeLaSolicitud(context: ExecutionContext): string {
 
         const request = context.switchToHttp().getRequest();
+        console.log('Request: ', request.rawHeaders);
         return request.rawHeaders[3].split(' ')[1] || request.rawHeaders[1].split(' ')[1];
     }
 
