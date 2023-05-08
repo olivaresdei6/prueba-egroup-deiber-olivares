@@ -9,6 +9,7 @@ export class AuthUsuarioGuard implements CanActivate {
     }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
+        console.log(context.switchToHttp().getRequest());
         const parametros = Object.keys(context.switchToHttp().getRequest().params);
         const querys  = Object.keys(context.switchToHttp().getRequest().query);
         const usuario: UsuarioEntity = this.obtenerUsuarioAutenticado(context);

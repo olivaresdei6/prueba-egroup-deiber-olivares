@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:594261311179:task-definition/prueba-egroup-task:1",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:594261311179:task-definition/prueba-egroup-task:11",
     "containerDefinitions": [
         {
             "name": "prueba-egroup",
-            "image": "594261311179.dkr.ecr.us-east-1.amazonaws.com/prueba-egroup:latest",
+            "image": "594261311179.dkr.ecr.us-east-1.amazonaws.com/prueba-egroup:1.0.0-prerelease14",
             "cpu": 0,
             "memory": 256,
             "portMappings": [
@@ -24,6 +24,10 @@
                 {
                     "name": "DATABASE_NAME",
                     "value": "prueba-egroup"
+                },
+                {
+                    "name": "S3_REGION",
+                    "value": "us-east-1"
                 },
                 {
                     "name": "DATABASE_HOST",
@@ -50,6 +54,10 @@
                     "value": "sandbox.smtp.mailtrap.io"
                 },
                 {
+                    "name": "S3_BUCKET_NAME",
+                    "value": "s3-de-imagenes"
+                },
+                {
                     "name": "EMAIL_FROM",
                     "value": "info@egroup.com.co"
                 },
@@ -66,8 +74,20 @@
                     "value": "f2gZyeGha1irlTNvpAU!8yO*Y@^c@4jT6a5T1sT7Dx!a$4s2Wq"
                 },
                 {
+                    "name": "HOST_URL",
+                    "value": "https://deiberolivares.com/api/v1"
+                },
+                {
+                    "name": "S3_SECRET_ACCESS_KEY",
+                    "value": "4hIwfLgAmr5lQ5jTczW2RncquQfKBI1f3+4DjA22"
+                },
+                {
                     "name": "EMAIL_PASSWORD",
                     "value": "1ca3fcb56e4128"
+                },
+                {
+                    "name": "S3_ACCESS_KEY_ID",
+                    "value": "AKIAYUXF373F3JUG5TDE"
                 },
                 {
                     "name": "DATABASE_USER",
@@ -78,15 +98,13 @@
                     "value": "MrBLOkeHbm3mOm2SGZix"
                 }
             ],
-            "environmentFiles": [],
             "mountPoints": [],
             "volumesFrom": [],
-            "ulimits": [],
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-create-group": "true",
                     "awslogs-group": "/ecs/prueba-egroup-task",
+                    "awslogs-create-group": "true",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
@@ -107,8 +125,8 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-create-group": "true",
                     "awslogs-group": "/ecs/ecs-aws-otel-sidecar-collector",
+                    "awslogs-create-group": "true",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 }
@@ -118,7 +136,7 @@
     "family": "prueba-egroup-task",
     "executionRoleArn": "arn:aws:iam::594261311179:role/ecsTaskExecutionRole",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 11,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -161,7 +179,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2023-05-03T02:53:27.680Z",
+    "registeredAt": "2023-05-08T12:14:28.301Z",
     "registeredBy": "arn:aws:iam::594261311179:root",
     "tags": []
 }

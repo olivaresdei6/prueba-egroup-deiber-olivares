@@ -7,7 +7,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: prueba-egroup
-  ECS_SERVICE: servicio-prueba-egroup
+  ECS_SERVICE: serv-egroup
   ECS_CLUSTER: prueba-egroup
   ECS_TASK_DEFINITION: prueba-egroup-task-revision1.json
   CONTAINER_NAME: prueba-egroup
