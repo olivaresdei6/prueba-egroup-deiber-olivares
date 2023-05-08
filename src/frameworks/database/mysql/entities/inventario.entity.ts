@@ -11,7 +11,7 @@ export class InventarioEntity {
         type: 'number',
     })
     @PrimaryGeneratedColumn({
-        type: "int",
+        type: "bigint",
         unsigned: true,
         comment: "Identificador de cada inventario"
     })
@@ -39,7 +39,7 @@ export class InventarioEntity {
         type: "int",
         nullable: false,
         name: "cantidad",
-        comment: "Cantidad de productos en el inventario. Este valor se modifica a través de las transacciones de compra y venta de productos",
+        comment: "Cantidad de productos en el inventario. Este valor se modifica a través de las transacciones de compra y cupon de productos",
     })
     cantidad!: number;
 
@@ -51,7 +51,7 @@ export class InventarioEntity {
         type: "int",
         nullable: false,
         name: "cantidad_disponible",
-        comment: "Cantidad disponible de productos en el inventario. Este valor se modifica a través de las transacciones de compra y venta de productos",
+        comment: "Cantidad disponible de productos en el inventario. Este valor se modifica a través de las transacciones de compra y cupon de productos",
     })
     cantidadDisponible!: number;
 
@@ -63,8 +63,9 @@ export class InventarioEntity {
         type: "int",
         nullable: false,
         name: "cantidad_reservada",
+        default: 0,
     })
-    cantidadReservada!: number;
+    cantidadReservada?: number;
 
     @ApiProperty({
         example: 10,
@@ -74,8 +75,9 @@ export class InventarioEntity {
         type: "int",
         nullable: false,
         name: "cantidad_vendida",
+        default: 0,
     })
-    cantidadVendida!: number;
+    cantidadVendida?: number;
 
     @ApiProperty({
         example: 10,
@@ -85,27 +87,30 @@ export class InventarioEntity {
         type: "int",
         nullable: false,
         name: "cantidad_comprada",
+        default: 0,
     })
-    cantidadComprada!: number;
+    cantidadComprada?: number;
 
     @ApiProperty({
         example: 10,
         description: "Cantidad de productos devueltos",
+        default: 0,
     })
     @Column({
         type: "int",
         nullable: false,
         name: "cantidad_devuelta",
+        default: 0,
     })
-    cantidadDevuelta!: number;
+    cantidadDevuelta?: number;
 
     @ApiProperty({
         example: 1,
         description: "Identificador único de cada producto",
     })
-    @ManyToOne(() => ProductoEntity, producto => producto.id, { nullable: false })
+    @ManyToOne(() => ProductoEntity, producto => producto.id, { nullable: false, eager: true })
     @JoinColumn({ name: 'id_producto' })
-    producto!: ProductoEntity;
+    producto!: ProductoEntity | number;
 
     @OneToMany(() => InventarioProductoEntity, precioInventario => precioInventario.precio)
     precioInventarios?: InventarioProductoEntity[];
@@ -114,7 +119,7 @@ export class InventarioEntity {
         example: 1,
         description: "Identificador único de cada precio",
     })
-    @ManyToOne(() => PrecioEntity, precio => precio.id, { nullable: false })
+    @ManyToOne(() => PrecioEntity, precio => precio.id, { nullable: false, eager: true })
     @JoinColumn({ name: 'id_precio' })
     precio!: number | PrecioEntity;
 
@@ -154,5 +159,31 @@ export class InventarioEntity {
         comment: "Estado del inventario. 1: Activo, 2: Inactivo"
     })
     estado?: number;
+
+    @ApiProperty({
+        description: "Fecha de creación del registro",
+        example: "2021-01-01 00:00:00"
+    })
+    @Column({
+        type: "timestamp",
+        nullable: false,
+        default: () => 'CURRENT_TIMESTAMP',
+        name: "fecha_creacion",
+        comment: "Fecha de creación del registro. Se genera automáticamente al momento de crear el registro"
+    })
+    fechaCreacion?: Date;
+
+    @ApiProperty({
+        description: "Fecha de actualización del registro",
+        example: "2021-01-01 00:00:00"
+    })
+    @Column({
+        type: "timestamp",
+        nullable: true,
+        name: "fecha_actualizacion",
+        comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
+        onUpdate: 'CURRENT_TIMESTAMP',
+    })
+    fechaActualizacion?: Date;
 
 }

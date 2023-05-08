@@ -27,5 +27,10 @@ export const JoiValidationSchema = Joi.object({
 	EMAIL_FROM: Joi.string().required(),
 	URL_FRONT: Joi.string().required(),
 	URL_CONFIRMATION: Joi.string().required(),
+	S3_BUCKET_NAME: Joi.string().required(),
+	S3_REGION: Joi.string().required(),
+	S3_ACCESS_KEY_ID: Joi.string().required(),
+	S3_SECRET_ACCESS_KEY: Joi.string().required(),
+	HOST_URL: Joi.string().required(),
 
 });

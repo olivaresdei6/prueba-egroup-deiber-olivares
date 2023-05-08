@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { InventarioEntity } from "./inventario.entity";
 import { InventarioProductoEntity } from "./inventario_producto.entity";
@@ -10,7 +10,7 @@ export class PrecioEntity {
         description: 'Identificador único de cada precio',
     })
     @PrimaryGeneratedColumn("increment", {
-        type: 'smallint',
+        type: 'bigint',
         unsigned: true,
         zerofill: false,
         comment: 'Identificador único de cada precio ',
@@ -56,7 +56,7 @@ export class PrecioEntity {
         name: 'precio_sin_iva',
         comment: 'Precio del producto sin iva',
     })
-    precio_sin_iva!: number;
+    precioSinIva!: number;
 
     @ApiProperty({
         description: 'Precio del producto con iva',
@@ -70,7 +70,7 @@ export class PrecioEntity {
         name: 'precio_iva',
         comment: 'Precio del producto con iva',
     })
-    precio_con_iva!: number;
+    precioConIva!: number;
 
     @ApiProperty({
         description: 'Ganancia del producto',
@@ -97,7 +97,7 @@ export class PrecioEntity {
         name: 'ganancia_sin_iva',
         comment: 'Ganancia del producto sin iva',
     })
-    ganancia_sin_iva!: number;
+    gananciaSinIva!: number;
 
     @ApiProperty({
         description: 'Ganancia del producto con iva',
@@ -111,11 +111,11 @@ export class PrecioEntity {
         name: 'ganancia_iva',
         comment: 'Ganancia con iva',
     })
-    ganancia_con_iva!: number;
+    gananciaConIva!: number;
 
     @ApiProperty({
-        description: "Fecha de creación del registro",
-        example: "2023y-01-01 00:00:00"
+        description: "Descripción del registro",
+        example: "Este precio es el precio de venta al público",
     })
     @Column({
         type: "varchar",
@@ -144,10 +144,9 @@ export class PrecioEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -164,7 +163,7 @@ export class PrecioEntity {
     observacion?: string;
 
     @Column({
-        type: "tinyint",
+        type: "int",
         nullable: false,
         default: 1,
         comment: "Estado del precio (1: activo, 0: inactivo)"
@@ -176,5 +175,4 @@ export class PrecioEntity {
 
     @OneToMany(() => InventarioEntity, inventario => inventario.precio)
     inventario?: InventarioEntity[];
-
 }

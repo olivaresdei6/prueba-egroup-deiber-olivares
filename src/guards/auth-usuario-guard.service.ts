@@ -1,10 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { IConexionDb } from "../../../frameworks/database/mysql/core/abstract";
-import { PermisoRolEntity, UsuarioEntity } from "../../../frameworks/database/mysql/entities";
-import { ResultadoParametrosDeUnaRuta } from "../../../frameworks/database/mysql/core/interfaces/permisoInterface";
+import { IConexionDb } from "../frameworks/database/mysql/core/abstract";
+import { PermisoRolEntity, UsuarioEntity } from "../frameworks/database/mysql/entities";
+import { ResultadoParametrosDeUnaRuta } from "../frameworks/database/mysql/core/interfaces/permisoInterface";
 
 @Injectable()
-export class UsuarioRolGuard implements CanActivate {
+export class AuthUsuarioGuard implements CanActivate {
     constructor(private readonly servicioDeBaseDeDatos: IConexionDb) {
     }
 
@@ -15,15 +15,16 @@ export class UsuarioRolGuard implements CanActivate {
         const token: string = this.obtenerTokenDeLaSolicitud(context);
         const metodo: string = this.obtenerElMetodoDeLaSolicitud(context);
         const ruta: string = this.obtenerLaRutaSolicitada(context);
-        const rolId: number = await this.obtenerElUuidDelRol(usuario);
-        const permisos: ResultadoParametrosDeUnaRuta[] = await this.obtenerPermisosDelUsuario(rolId);
-        const isTokenValido: boolean = await this.validarToken(token, usuario);
+        const [rolId, permisos, isTokenValido] = await Promise.all([
+            this.obtenerElUuidDelRol(usuario),
+            //@ts-ignore
+            this.obtenerPermisosDelUsuario(usuario.rol.id),
+            this.validarToken(token, usuario)
+        ]);
         if (isTokenValido && this.verificarSolicitud(permisos, metodo, ruta, parametros, querys)) {
             return true;
         }
-
         throw new UnauthorizedException('No tienes permisos para acceder a este recurso');
-
     }
 
     private obtenerUsuarioAutenticado(context: ExecutionContext): UsuarioEntity {
@@ -32,7 +33,6 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     private obtenerTokenDeLaSolicitud(context: ExecutionContext): string {
-        console.log(context.switchToHttp().getRequest());
         const request = context.switchToHttp().getRequest();
         return request.rawHeaders[3].split(' ')[1] || request.rawHeaders[1].split(' ')[1];
     }
@@ -50,9 +50,9 @@ export class UsuarioRolGuard implements CanActivate {
             return url.split('?')[0];
         }
         else if (parametros.length > 0) {
-            return context.switchToHttp().getRequest().route.path.replace(':uuid', '');
+            return context.switchToHttp().getRequest().route.path.replace('/:uuid', '');
         }
-        return url+'/';
+        return url;
     }
 
     private async obtenerElUuidDelRol(usuario: UsuarioEntity): Promise<number> {
@@ -71,7 +71,8 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     private async obtenerPermisosDelUsuario(roleId: number): Promise<ResultadoParametrosDeUnaRuta[]> {
-        return await this.servicioDeBaseDeDatos.permiso.obtenerPermisos(+roleId);
+        const permisos =  await this.servicioDeBaseDeDatos.permiso.obtenerPermisos(+roleId);
+        return permisos;
     }
 
     private async validarToken(token: string, usuario: UsuarioEntity): Promise<boolean> {
@@ -92,16 +93,17 @@ export class UsuarioRolGuard implements CanActivate {
     }
 
     private verificarSolicitud(permisos: ResultadoParametrosDeUnaRuta[], metodoHttp: string, ruta: string, parametros: string[], queries: string[]): boolean {
+
         const permiso = permisos.find(permiso => {
-            console.log('RUTA SOLICITADA', ruta, metodoHttp, parametros);
-            console.log('RUTA PERMITIDA', permiso.ruta, permiso.metodoHttp, permiso.parametros);
-            console.log('SON IGUALES', permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && parametros.length <= permiso.parametros.length);
-            console.log('======================================================================================================');
-            console.log('======================================================================================================');
-            return permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && parametros.length <= permiso.parametros.length
+            if (parametros.length > 0) {
+                return permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && permiso.parametros.length === parametros.length;
+            }
+            if (queries.length > 0) {
+                return permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && queries.length <= permiso.parametros.length;
+            }
+            return permiso.ruta === ruta && permiso.metodoHttp === metodoHttp && permiso.parametros.length === 0;
         });
         if (!permiso) return false;
-
         if (queries.length > 0) {
             for (const query of queries) {
                 let isParametroValido = false;

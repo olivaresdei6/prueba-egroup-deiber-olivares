@@ -3,7 +3,7 @@ import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
 import {
     CategoriaEntity,
     CategoriaTipoProductoEntity,
-    DepartamentoEntity,
+    DepartamentoEntity, ImagenEntity, ImageProductoEntity,
     ParametroEntity,
     ProductoEntity,
     TipoProductoEntity,
@@ -22,16 +22,20 @@ import {
 import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
 import { ParametroEnum } from "../../objetos-genericos/parametro.enum";
 import { ValorParametroInterface } from "../../objetos-genericos/valor-parametro.interface";
+import { FileService } from "../../frameworks/external_file_storage/file/file.service";
 
 @Injectable()
 export class ProductoService {
-    constructor( private readonly servicioDeBaseDeDatos: IConexionDb) {}
+    constructor(
+        private readonly servicioDeBaseDeDatos: IConexionDb,
+        private readonly fileService: FileService
+    ) {}
 
-    async crearRegistro(crearDto: CrearCategoriaDto | CrearTipoDeProductoDto | CrearCategoriaTipoProductoDto | CrearProductoDto)  {
+    async crearRegistro(crearDto: CrearCategoriaDto | CrearTipoDeProductoDto | CrearCategoriaTipoProductoDto | CrearProductoDto, file?: Express.Multer.File){
         if (crearDto instanceof CrearCategoriaDto) return await this.crearCategoria(crearDto);
         else if (crearDto instanceof CrearTipoDeProductoDto) return await this.crearTipoDeProducto(crearDto);
         else if (crearDto instanceof CrearCategoriaTipoProductoDto) return await this.crearCategoriaTipoProducto(crearDto);
-        else if (crearDto instanceof CrearProductoDto) return await this.crearProducto(crearDto);
+        else if (crearDto instanceof CrearProductoDto) return await this.crearProducto(crearDto, file);
         throw new BadRequestException('Tipo de registro no válido');
     }
 
@@ -40,9 +44,9 @@ export class ProductoService {
         switch (entidad.toLowerCase()) {
             case 'categoria': return await this.servicioDeBaseDeDatos.categoria.obtenerRegistros();
             case 'tipo_de_producto': return await this.servicioDeBaseDeDatos.tipoProducto.obtenerRegistros();
-            case 'categoria tipo producto': return await this.servicioDeBaseDeDatos.categoriaTipoProducto.obtenerRegistros();
+            case 'categoria_tipo_producto': return await this.servicioDeBaseDeDatos.categoriaTipoProducto.obtenerRegistros();
             case 'producto': return await this.servicioDeBaseDeDatos.producto.obtenerRegistros();
-            default: throw new BadRequestException('No se puede obtener los registros. Entidad no encontrada. Se esperaba en el nombre del campo: categoria, tipo de producto, categoria tipo producto o producto');
+            default: throw new BadRequestException('No se puede obtener los registros. Entidad no encontrada. Se esperaba en el nombre del campo: categoria, tipo de producto, categoria_tipo_producto o producto');
         }
     }
 
@@ -87,8 +91,8 @@ export class ProductoService {
      * Métodos privados
      */
 
-    private async obtenerCategoria(uuid: string): Promise<DepartamentoEntity> {
-        return await this.servicioDeBaseDeDatos.categoria.obtenerUnRegistroPor({where: {uuid}}, 'Departamento');
+    private async obtenerCategoria(uuid: string): Promise<CategoriaEntity> {
+        return await this.servicioDeBaseDeDatos.categoria.obtenerUnRegistroPor({where: {uuid}}, 'Categoria');
     }
 
     private async obtenerTipoProducto(uuid: string): Promise<TipoProductoEntity> {
@@ -150,31 +154,56 @@ export class ProductoService {
          * Se ejecuta la promesa y se obtienen los registros de la categoría y el tipo de producto. Si llega a fallar una de las dos, se detiene la ejecución y se lanza una excepción.
          * La exepción se lanza desde el método obtenerUnRegistroPor, si no se encuentra el registro, se lanza una excepción.
          */
-        const [tipoProducto, categoria] = await Promise.all(fetchPromises);
+        const [categoria, tipoProducto] = await Promise.all(fetchPromises);
+        if (tipoProducto && categoria) {
 
-        /**
-         * Se crea el registro de la relación entre la categoría y el tipo de producto.
-         * La razon por la que no se paso el dto directamente al método crearRegistro, es porque el dto no tiene los campos de la relación, solo tiene los UUID de la categoría y el tipo de producto
-         * y por motivos de seguridad, no se exponen los id de las entidades, solo los UUID.
-         */
-        await this.servicioDeBaseDeDatos.categoriaTipoProducto.crearRegistro({ ...crearDto, categoria: categoria.id, tipoProducto: tipoProducto.id });
-        return {
-            status: 201,
-            message: 'Registro creado correctamente',
-        };
+            /**
+             * Se crea el registro de la relación entre la categoría y el tipo de producto.
+             * La razon por la que no se paso el dto directamente al método crearRegistro, es porque el dto no tiene los campos de la relación, solo tiene los UUID de la categoría y el tipo de producto
+             * y por motivos de seguridad, no se exponen los id de las entidades, solo los UUID.
+             */
+            await this.servicioDeBaseDeDatos.categoriaTipoProducto.crearRegistro({
+                ...crearDto,
+                categoria: categoria.id,
+                tipoProducto: tipoProducto.id
+            });
+            return {
+                status: 201,
+                message: 'Registro creado correctamente',
+            };
+        } else {
+            throw new BadRequestException('No se puede crear el registro. La categoría o el tipo de producto no existe');
+        }
     }
 
     /**
      * Método que crea un producto
      * @param crearDto - DTO con el que se creará el producto
+     * @param file
      * @private
      */
-    private async crearProducto(crearDto: CrearProductoDto): Promise<{ status: number; message: string }> {
+    private async crearProducto(crearDto: CrearProductoDto, file: Express.Multer.File): Promise<{
+        message: string;
+        status: number,
+        image_db: ImagenEntity,
+        producto: ProductoEntity
+    }> {
         const dto = await this.construirDto(crearDto)
-        await this.servicioDeBaseDeDatos.producto.crearRegistro(dto);
+        let image_db = await this.servicioDeBaseDeDatos.imagen.obtenerUnRegistroPor({ where: { nombreGuardado: file.originalname } }, 'Imagen', false);
+        if (!image_db) {
+            const image = await this.fileService.images.uploadFile(file);
+            image_db = await this.servicioDeBaseDeDatos.imagen.crearRegistro({...image});
+        }
+        const producto = await this.servicioDeBaseDeDatos.producto.crearRegistro(dto);
+        const imagenProducto = await this.servicioDeBaseDeDatos.imagenProducto.crearRegistro({
+            producto: producto.id,
+            imagen: image_db.id
+        });
         return {
             status: 201,
             message: 'Registro creado correctamente',
+            image_db,
+            producto
         }
 
 
@@ -269,7 +298,7 @@ export class ProductoService {
         const resultadoValidacion = this.validarValoresParametros([
             { parametro: ParametroEnum.color, valorParametro: color && color},
             { parametro: ParametroEnum.material, valorParametro: material && material},
-            { parametro: ParametroEnum.tiposDeUsuarios, valorParametro: tipoUsuario && tipoUsuario},
+            { parametro: ParametroEnum.tipoDeUsuario, valorParametro: tipoUsuario && tipoUsuario},
 
         ]);
         if (!resultadoValidacion.resultado) {

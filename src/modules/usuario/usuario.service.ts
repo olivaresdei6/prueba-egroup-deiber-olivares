@@ -1,15 +1,18 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { IConexionDb } from "../../frameworks/database/mysql/core/abstract";
-import { ParametroEntity, RegistroDeAccesoEntity } from "../../frameworks/database/mysql/entities";
+import { ParametroEntity, RegistroDeAccesoEntity, UsuarioEntity } from "../../frameworks/database/mysql/entities";
 import * as bcrypt from "bcrypt";
 import { ActualizarUsuarioDto, CrearUsuarioDto, LoginUsuarioDto } from "./dto";
-import { generateCodeAuth } from "../../helper/generateCodeAuth";
+import { generateCodeAuth } from "../../helpers/generateCodeAuth";
 import { MailerService } from "@nestjs-modules/mailer";
 import { MailService } from "../../frameworks/mails/mail.service";
 import {JwtService} from "@nestjs/jwt";
 import { envConfiguration } from "../../config/env.config";
 import { JwtPayload } from "./interfaces/jwt.payload.interface";
 import { camposDeBusquedaGenericos } from "../../objetos-genericos/campos-de-busqueda.generic";
+import {
+    RespuestaPaginadaInterface
+} from "../../frameworks/database/mysql/core/interfaces/respuesta_paginada.interface";
 
 @Injectable()
 export class UsuarioService {
@@ -102,18 +105,43 @@ export class UsuarioService {
     }
 
     async obtenerUsuariosPaginados(limite: number, pagina: number, busqueda?: string, campo?: string) {
+        let usuarios : RespuestaPaginadaInterface<UsuarioEntity>;
         if (campo && !camposDeBusquedaGenericos.includes(campo.toLowerCase())) {
             throw new BadRequestException('El campo enviado no es permitido. Se esperaba uno de estos: ' + camposDeBusquedaGenericos.join(', '));
         }
         else if (busqueda && campo) {
-            return await this.servicioDeBaseDeDatos.usuario.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
+            usuarios = await this.servicioDeBaseDeDatos.usuario.obtenerRegistrosPaginados({limite, pagina, busqueda, campo});
         }else {
-            return await this.servicioDeBaseDeDatos.usuario.obtenerRegistrosPaginados({limite, pagina});
+            usuarios =  await this.servicioDeBaseDeDatos.usuario.obtenerRegistrosPaginados({limite, pagina});
+        }
+        const {cantidadTotalDeRegistros, paginaActual, paginasTotales, registrosPaginados} = usuarios;
+        return {
+            status: 200,
+            message: 'Usuarios obtenidos correctamente',
+            data: {
+                cantidadTotalDeRegistros,
+                paginaActual,
+                paginasTotales,
+                registrosPaginados: registrosPaginados.map(usuario => {
+                    const {password, ...resto} = usuario;
+                    return resto;
+                })
+            }
         }
     }
     
-    async obtenerUnUsuario(uuid: string): Promise<ParametroEntity> {
-        return await this.servicioDeBaseDeDatos.usuario.obtenerUnRegistroPor({where: {uuid}}, 'Parámetro');
+    async obtenerUnUsuario(uuid: string) {
+        const usuario =  await this.servicioDeBaseDeDatos.usuario.obtenerUnRegistroPor({where: {uuid}}, 'Parámetro');
+        if (!usuario) {
+            throw new NotFoundException('No se encontro un usuario en el sistema con los datos ingresados');
+        }else{
+            const {password, ...resto} = usuario;
+            return {
+                status: 200,
+                message: 'Usuario obtenido correctamente',
+                data: resto,
+            }
+        }
     }
     
     async actualizarRegistro(uuid: string, actualizarUsuarioDto: ActualizarUsuarioDto)  {
@@ -122,7 +150,17 @@ export class UsuarioService {
             const salt = await bcrypt.genSalt( 10 );
             actualizarUsuarioDto.password = await bcrypt.hash(password, salt);
         }
-        await this.servicioDeBaseDeDatos.usuario.actualizarRegistro(uuid, actualizarUsuarioDto);
+        const usuario = await this.servicioDeBaseDeDatos.usuario.actualizarRegistro(uuid, actualizarUsuarioDto);
+        if (!usuario) {
+            throw new NotFoundException('No se encontro un usuario en el sistema con los datos ingresados');
+        }else{
+            const {password, ...resto} = usuario;
+            return {
+                status: 200,
+                message: 'Usuario actualizado correctamente',
+                data: resto,
+            }
+        }
     }
 
     private async registrarToken(uuid: string, id:number) {

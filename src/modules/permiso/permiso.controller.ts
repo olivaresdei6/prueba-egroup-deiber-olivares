@@ -14,7 +14,7 @@ import { PermisoEntity } from "../../frameworks/database/mysql/entities";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
 import { CrearPermisoDto } from "./dto/crear-permiso.dto";
 import { ActualizarPermisoDto } from "./dto/actualizar-permiso.dto";
-import { Auth } from "../usuario/decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Permiso")
 @Controller('permiso')

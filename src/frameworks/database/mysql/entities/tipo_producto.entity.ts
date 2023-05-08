@@ -10,7 +10,7 @@ export class TipoProductoEntity {
         example: 1,
         description: 'Identificador de esta tabla'
     })
-    @PrimaryGeneratedColumn('increment',{type: 'smallint', unsigned: true, zerofill: true})
+    @PrimaryGeneratedColumn('increment',{type: 'int', unsigned: true})
     id?: number;
 
     @ApiProperty({

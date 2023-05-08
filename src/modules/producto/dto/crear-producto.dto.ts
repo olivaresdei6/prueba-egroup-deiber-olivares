@@ -40,6 +40,7 @@ export class CrearProductoDto {
         nullable: true,
     })
     @IsNumber({}, {message: "La altura debe ser un número"})
+    @IsOptional()
     altura?: number;
 
     @ApiProperty({
@@ -48,6 +49,7 @@ export class CrearProductoDto {
         nullable: false
     })
     @IsNumber({}, {message: "El ancho debe ser un número"})
+    @IsOptional()
     ancho?: number;
 
 

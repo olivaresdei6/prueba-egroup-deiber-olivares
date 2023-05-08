@@ -9,7 +9,7 @@ export class CategoriaEntity {
         description: 'Identificador de la categoría',
     })
     @PrimaryGeneratedColumn('increment',{
-        type: "smallint",
+        type: "int",
         unsigned: true,
         comment: "Identificador de la categoría",
     })
@@ -120,9 +120,6 @@ export class CategoriaEntity {
     })
     fechaActualizacion?: Date;
 
-    @OneToMany(()=>CategoriaTipoProductoEntity,
-        categoriaTipoProducto =>
-            categoriaTipoProducto.categoria
-    )
+    @OneToMany(()=> CategoriaTipoProductoEntity, categoriaTipoProducto => categoriaTipoProducto.categoria)
     categoriasTipoProductos?: CategoriaTipoProductoEntity[];
 }

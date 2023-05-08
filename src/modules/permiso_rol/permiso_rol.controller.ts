@@ -15,7 +15,7 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 import { ActualizarPermisoRolDto } from "./dto/actualizar-permiso-rol.dto";
 import { CrearPermisoRolDto } from "./dto/crear-permiso-rol.dto";
 import { PermisoRolService } from "./permiso_rol.service";
-import { Auth } from "../usuario/decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Roles de permisos")
 @Controller('permiso_rol')

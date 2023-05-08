@@ -5,7 +5,7 @@ export class CrearDireccionDto {
 
     @ApiProperty({
         example: 'Calle 67 # 45 - 12',
-        description: 'Dirección de la venta o compra',
+        description: 'Dirección de la cupon o compra',
         uniqueItems: true,
     })
     @IsString({message: "La dirección debe ser un texto"})

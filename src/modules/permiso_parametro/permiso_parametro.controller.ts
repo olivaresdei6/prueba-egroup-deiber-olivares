@@ -15,7 +15,7 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 import { ActualizarPermisoParametroDto } from "./dto/actualizar-permiso-parametro.dto";
 import { CrearPermisoParametroDto } from "./dto/crear-permiso-parametro.dto";
 import { PermisoParametroService } from "./permiso_parametro.service";
-import { Auth } from "../usuario/decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Permiso - parametros de rutas")
 @Controller('permiso_parametro')

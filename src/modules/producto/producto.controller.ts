@@ -6,7 +6,7 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
-    Query, UseInterceptors
+    Query, UploadedFile, UseInterceptors
 } from "@nestjs/common";
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
@@ -20,6 +20,8 @@ import {
 } from "./dto";
 import { ProductoService } from "./producto.service";
 import { ParametroEntity } from "../../frameworks/database/mysql/entities";
+import { Auth } from "../../decorators/auth.decorator";
+import { ValidateImageUploaded } from "../../decorators/upload.image.decorator";
 
 @ApiTags("Producto")
 @Controller('producto')
@@ -30,14 +32,18 @@ export class ProductoController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
+    @ValidateImageUploaded()
     @Post()
-    crearProducto(@Body() crearDto: CrearProductoDto) {
-        return this.productoService.crearRegistro(crearDto);
+    crearProducto(@UploadedFile() file: Express.Multer.File, @Body() crearDto: CrearProductoDto) {
+        return this.productoService.crearRegistro(crearDto, file);
     }
+
     @ApiResponse({ status: 201, description: 'Registro creado correctamente.'})
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post('categoria')
     crearCategoria(@Body() crearDto: CrearCategoriaDto) {
         return this.productoService.crearRegistro(crearDto);
@@ -47,6 +53,7 @@ export class ProductoController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post('tipo_producto')
     crearTipoProducto(@Body() crearDto: CrearTipoDeProductoDto) {
         return this.productoService.crearRegistro(crearDto);
@@ -56,6 +63,7 @@ export class ProductoController {
     @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
+    @Auth()
     @Post('asociar_tipo_categoria')
     crearTipoProductoCategoria(@Body() crearDto: CrearCategoriaTipoProductoDto) {
         return this.productoService.crearRegistro(crearDto);
@@ -67,6 +75,7 @@ export class ProductoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron parámetros.' })
+    @Auth()
     @Get('/paginado')
     @UseInterceptors(PaginacionInterceptor)
     @ApiQuery({name: 'pagina', required: true, type: Number})
@@ -98,6 +107,7 @@ export class ProductoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El parámetro no existe.' })
+    @Auth()
     @Patch('categoria/:uuid')
     actualizarCategoria(@Param('uuid', ParseUUIDPipe) uuid:string, @Body() actualizarDto:ActualizarCategoriaDto) {
         return this.productoService.actualizarRegistro(uuid, actualizarDto);
@@ -108,6 +118,7 @@ export class ProductoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El parámetro no existe.' })
+    @Auth()
     @Patch('tipo_producto/:uuid')
     actualizarTipoProducto(@Param('uuid', ParseUUIDPipe) uuid:string, @Body() actualizarDto:ActualizarTipoDeProductoDto) {
         return this.productoService.actualizarRegistro(uuid, actualizarDto);
@@ -118,7 +129,8 @@ export class ProductoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El parámetro no existe.' })
-    @Patch('tipo_producto_categoria:uuid')
+    @Auth()
+    @Patch('tipo_producto_categoria/:uuid')
     actualizarTipoProductoCategoria(@Param('uuid', ParseUUIDPipe) uuid:string, @Body() actualizarDto:ActualizarCategoriaTipoDeProductoDto) {
         return this.productoService.actualizarRegistro(uuid, actualizarDto);
     }
@@ -128,10 +140,9 @@ export class ProductoController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: El parámetro no existe.' })
+    @Auth()
     @Patch('/:uuid')
     actualizarProducto(@Param('uuid', ParseUUIDPipe) uuid:string, @Body() actualizarDto:ActualizarProductoDto) {
         return this.productoService.actualizarRegistro(uuid, actualizarDto);
     }
-    
-    
 }

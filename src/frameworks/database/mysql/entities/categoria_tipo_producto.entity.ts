@@ -106,10 +106,7 @@ export class CategoriaTipoProductoEntity {
         nullable: false,
         required: true
     })
-    @ManyToOne(() => TipoProductoEntity,
-        tipoProducto => tipoProducto.id,
-        { eager: true, nullable: false }
-    )
+    @ManyToOne(() => TipoProductoEntity, tipoProducto => tipoProducto.id, { eager: true, nullable: false })
     @JoinColumn({ name: "id_tipo_producto" })
     tipoProducto!: number | TipoProductoEntity;
 
@@ -119,10 +116,7 @@ export class CategoriaTipoProductoEntity {
         nullable: false,
         required: true
     })
-    @ManyToOne(()=> CategoriaEntity,
-        categoria => categoria.id,
-        {eager: true, nullable: false}
-    )
+    @ManyToOne(()=> CategoriaEntity, categoria => categoria.id, {eager: true, nullable: false})
     @JoinColumn({name: "id_categoria"})
     categoria!: number | CategoriaEntity;
 

@@ -19,26 +19,21 @@ export class MySQLPermisoRepository<T> extends MysqlGenericRepository<T> impleme
             let ruta = `/api/v1${permiso.permiso.rutaDelModulo}${permiso.permiso.direccionDeLaRuta}`;
             const parametros = permiso.parametros.length > 0 ? permiso.parametros : [];
             rutasPermitidas.push({ruta, metodoHttp: permiso.permiso.metodoHttp, parametros});
-
         }
         return rutasPermitidas;
-
     }
 
     private async fetchPermisosRol(rolId: number): Promise<RutaParametros[]> {
         const permisos: PermisoInterface[] = await this.obtenerPermisosDeUnRol(rolId);
-
-        const rutaCompleta: RutaParametros[] = [];
-
-        for(const permiso of permisos){
+        const rutaCompletaPromises: Promise<RutaParametros>[] = permisos.map(async (permiso) => {
             const parametrosDeLaRuta  = await this.obtenerParametrosDeUnaRuta(permiso.uuidDeLaRuta);
-            rutaCompleta.push({
+            return {
                 permiso,
                 parametros: parametrosDeLaRuta
-            });
-        }
+            };
+        });
 
-        return rutaCompleta;
+        return await Promise.all(rutaCompletaPromises);
     }
 
 

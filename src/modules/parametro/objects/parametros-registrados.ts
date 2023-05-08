@@ -5,4 +5,5 @@ export const parametrosRegistrados = {
     tiposDeEstadoCivil: 'tipos de estado civil',
     colores: 'colores',
     metodosHttp: 'metodos http permitidos',
+    tiposDeCupon: 'tipos de cupones',
 }

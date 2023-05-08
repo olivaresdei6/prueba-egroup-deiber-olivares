@@ -18,6 +18,11 @@ export const envConfiguration = () => ({
     emailFrom: process.env.EMAIL_FROM,
     urlFront: process.env.URL_FRONT,
     urlConfirmAccount: process.env.URL_CONFIRMATION,
+    s3BucketName: process.env.S3_BUCKET_NAME,
+    s3Region: process.env.S3_REGION,
+    s3AccessKey: process.env.S3_ACCESS_KEY_ID,
+    s3SecretKey: process.env.S3_SECRET_ACCESS_KEY,
+    hostUrl: process.env.HOST_URL,
 
 
 

@@ -9,7 +9,7 @@ import {
 import {IGenericRepository} from "../../core/abstract/generic.repository.abstract";
 import {FindOptionsWhere} from "typeorm/find-options/FindOptionsWhere";
 import {RespuestaPaginadaInterface} from "../../core/interfaces/respuesta_paginada.interface";
-import { generateUUID } from "../../../../../helper/generateUUID";
+import { generateUUID } from "../../../../../helpers/generateUUID";
 import { BuscarRegistrosInterface } from "../../core/interfaces/buscar_registros.interface";
 import { BadRequestException, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 
@@ -91,6 +91,7 @@ export class MysqlGenericRepository<T> implements IGenericRepository<T> {
             return instanciaDeLaEntidad;
 
         } catch (error) {
+            console.log(error);
             if (error.code === 'ER_DUP_ENTRY') {
                 throw new BadRequestException(`Ya existe un registro con el mismo nombre.`);
             }

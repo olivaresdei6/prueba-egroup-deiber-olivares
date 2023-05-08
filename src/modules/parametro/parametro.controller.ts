@@ -14,7 +14,7 @@ import {ActualizarParametroDto} from './dto/actualizar-parametro.dto';
 import { ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ParametroEntity } from "../../frameworks/database/mysql/entities";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
-import { Auth } from "../usuario/decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Parametro")
 @Controller('parametro')

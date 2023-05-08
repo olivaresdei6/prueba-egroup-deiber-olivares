@@ -15,26 +15,37 @@ import { PermisoModule } from "./modules/permiso/permiso.module";
 import { UsuarioModule } from "./modules/usuario/usuario.module";
 import { DireccionModule } from "./modules/direccion/direccion.module";
 import { ProductoModule } from "./modules/producto/producto.module";
+import { CuponModule } from "./modules/cupon/cupon.module";
+import { PrecioModule } from "./modules/precio/precio.module";
+import { InventarioModule } from "./modules/inventario/inventario.module";
+import { VentaModule } from "./modules/venta/venta.module";
+import { FileModule } from "./frameworks/external_file_storage/file/file.module";
 
 @Module({
-  imports: [
-      ConfigModule.forRoot({
+    imports: [
+        ConfigModule.forRoot({
           load: [envConfiguration],
           validationSchema: JoiValidationSchema
-      }),
+        }),
 
-      MySQLDatabaseModule,
-      ParametroModule,
-      ValorParametroModule,
-      PermisoModuloModule,
-      PermisoParametroModule,
-      PermisoRutaModule,
-      PermisoRolModule,
-      PermisoModule,
-      UsuarioModule,
-      DireccionModule,
-      ProductoModule
-  ],
+        MySQLDatabaseModule,
+        FileModule,
+        ParametroModule,
+        ValorParametroModule,
+        PermisoModuloModule,
+        PermisoParametroModule,
+        PermisoRutaModule,
+        PermisoRolModule,
+        PermisoModule,
+        UsuarioModule,
+        DireccionModule,
+        ProductoModule,
+        CuponModule,
+        PrecioModule,
+        InventarioModule,
+        VentaModule,
+        ConfigModule
+    ],
   controllers: [AppController],
   providers: [AppService],
 })

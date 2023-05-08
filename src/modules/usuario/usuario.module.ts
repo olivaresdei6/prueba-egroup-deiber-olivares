@@ -6,7 +6,7 @@ import { MailModule } from "../../frameworks/mails/mail.module";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { envConfiguration } from "../../config/env.config";
-import { JwtStrategy } from "./strategies/jwt.strategy";
+import { JwtStrategy } from "../../strategies/jwt.strategy";
 
 @Module({
     controllers: [UsuarioController],

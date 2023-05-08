@@ -15,7 +15,7 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 import { UsuarioService } from "./usuario.service";
 import { ActualizarUsuarioDto, CrearUsuarioDto, LoginUsuarioDto } from "./dto";
 import { roles } from "./objects/roles";
-import { Auth } from "./decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Usuario")
 @Controller('usuario')
@@ -60,15 +60,6 @@ export class UsuarioController {
     registrarAdministrador(@Body() crearParametroDto: CrearUsuarioDto){
         return this.usuarioService.registrarUsuario(crearParametroDto, roles.usuarioAdministrador);
     }
-
-    @ApiResponse({ status: 201, description: 'Usuario creado correctamente.'})
-    @ApiResponse({ status: 400, description: 'Bad Request: Verifique los datos de entrada' })
-    @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
-    @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
-    @Post()
-    registrarDesarrollador(@Body() crearParametroDto: CrearUsuarioDto){
-        return this.usuarioService.registrarUsuario(crearParametroDto, roles.usuarioDesarrollador);
-    }
     
     
     @ApiResponse({ status: 201, description: 'Usuarios encontrados correctamente.', type: UsuarioEntity, isArray: true})
@@ -76,6 +67,7 @@ export class UsuarioController {
     @ApiResponse({ status: 401, description: 'Unauthorized: No tiene permisos para realizar esta acción' })
     @ApiResponse({ status: 403, description: 'Forbidden: Verifique que el token de autenticación sea válido y que no halla expirado.' })
     @ApiResponse({ status: 404, description: 'Not Found: No se encontraron usuarios registrados' })
+    @Auth()
     @Get()
     obtenerTodosLosUsuarios()  {
         return this.usuarioService.obtenerTodosLosUsuarios();

@@ -15,7 +15,7 @@ import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.inter
 import { PermisoModuloService } from "./permiso_modulo.service";
 import { ActualizarPermisoModuloDto } from "./dto/actualizar-permiso-modulo.dto";
 import { CrearPermisoModuloDto } from "./dto/crear-permiso-modulo.dto";
-import { Auth } from "../usuario/decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Modulos de permisos")
 @Controller('permiso_modulo')

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { UsuarioEntity } from "./usuario.entity";
 import { DetalleVentaEntity } from "./detalle_venta.entity";
@@ -8,19 +8,19 @@ import { DireccionEntity } from "./direccion.entity";
 export class VentaEntity {
 
     @ApiProperty({
-        description: 'Identificador único de cada venta',
+        description: 'Identificador único de cada cupon',
         example: 1,
         uniqueItems: true,
     })
     @PrimaryGeneratedColumn('increment', {
         type: 'bigint',
-        comment: 'Identificador único de cada venta',
+        comment: 'Identificador único de cada cupon',
         unsigned: true,
     })
     id?: number;
 
     @ApiProperty({
-        description: 'Identificador único de cada venta',
+        description: 'Identificador único de cada cupon',
         example: 1,
         uniqueItems: true,
     })
@@ -29,12 +29,12 @@ export class VentaEntity {
         length: 36,
         nullable: false,
         unique: true,
-        comment: "UUID de la venta.  Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
+        comment: "UUID de la cupon.  Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
 
     @ApiProperty({
-        description: 'Valor total de la venta',
+        description: 'Valor total de la cupon',
         example: 100000,
     })
     @Column({
@@ -42,12 +42,12 @@ export class VentaEntity {
         nullable: false,
         precision: 10,
         name: 'valor_neto',
-        comment: 'Valor total de la venta'
+        comment: 'Valor total de la cupon'
     })
     valorNeto?: number;
 
     @ApiProperty({
-        description: 'Descrición de la venta',
+        description: 'Descrición de la cupon',
         example: 'Venta de 2 productos',
         nullable: true
     })
@@ -55,12 +55,12 @@ export class VentaEntity {
         nullable: true,
         length: 500,
         name: 'descripcion',
-        comment: 'Descripción de la venta'
+        comment: 'Descripción de la cupon'
     })
     descripcion?: string;
 
     @ApiProperty({
-        description: 'Fecha de la venta',
+        description: 'Fecha de la cupon',
         example: '2024-01-01 00:00:00'
     })
     @Column({
@@ -68,12 +68,12 @@ export class VentaEntity {
         nullable: false,
         default: () => "CURRENT_TIMESTAMP",
         name: "fecha_venta",
-        comment: "Fecha de la venta. Se genera automáticamente al momento de crear el registro"
+        comment: "Fecha de la cupon. Se genera automáticamente al momento de crear el registro"
     })
-    fechaVenta?: Date;
+    fechaSolicitudVenta?: Date;
 
     @ApiProperty({
-        description: "Fecha de la modificación de la venta",
+        description: "Fecha de la modificación de la cupon",
         example: "2024-01-01 00:00:00"
     })
     @Column({
@@ -89,12 +89,12 @@ export class VentaEntity {
 
     @ApiProperty({
         example: 'lorem ipsum dolor sit amet consectetur adipisicing elit.',
-        description: 'Observaciones de la venta',
+        description: 'Observaciones de la cupon',
         nullable: true
     })
     @Column('varchar', {
         nullable: true,
-        comment: 'Observaciones de la venta',
+        comment: 'Observaciones de la cupon',
         length: 500,
     })
     observacion?: string;
@@ -115,12 +115,12 @@ export class VentaEntity {
         type: "int",
         nullable: false,
         default: 1,
-        comment: "Estado de la venta (1: vendido, 0: venta cancelada, 2: venta en proceso, 3: venta devuelta)"
+        comment: "Estado de la cupon (1: vendido, 0: cupon cancelada, 2: cupon en proceso, 3: cupon devuelta)"
     })
     estado?: number;
 
     @ApiProperty({
-        description: 'Identificador único del usuario al que se le realizó la venta',
+        description: 'Identificador único del usuario al que se le realizó la cupon',
         example: 1,
     })
     @ManyToOne(() => UsuarioEntity, usuario => usuario.id, {eager: true, nullable: false})
@@ -128,15 +128,14 @@ export class VentaEntity {
     usuario!: number | UsuarioEntity;
 
     @ApiProperty({
-        description: 'Identificador de los detalles de la venta',
+        description: 'Identificador de los detalles de la cupon',
         example: 1,
     })
-    @ManyToOne(() => DetalleVentaEntity, detalleVenta => detalleVenta.idVenta, {eager: true, nullable: false})
-    @JoinColumn({name: 'id_detalle_venta'})
-    detalleVenta!: number | DetalleVentaEntity;
+    @OneToMany(() => DetalleVentaEntity, detalleVenta => detalleVenta.id, {eager: true, nullable: true})
+    detallesVenta?: DetalleVentaEntity[];
 
     @ApiProperty({
-        description: 'Identificador de la dirección de la venta',
+        description: 'Identificador de la dirección de la cupon',
         example: 1,
     })
     @ManyToOne(() => DireccionEntity, direccion => direccion.id, {eager: true, nullable: true})

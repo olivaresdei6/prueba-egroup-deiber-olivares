@@ -5,13 +5,13 @@ import { InventarioEntity, CuponDeDescuentoEntity, VentaEntity } from "./";
 @Entity({name: 'detalle_venta'})
 export class DetalleVentaEntity {
     @ApiProperty({
-        description: 'Identificador único de cada venta de un producto',
+        description: 'Identificador único de cada cupon de un producto',
         example: 1,
         uniqueItems: true,
     })
     @PrimaryGeneratedColumn('increment', {
         type: 'bigint',
-        comment: 'Identificador único de cada venta de un producto',
+        comment: 'Identificador único de cada cupon de un producto',
         unsigned: true,
     })
     id?: number;
@@ -21,23 +21,9 @@ export class DetalleVentaEntity {
         length: 36,
         nullable: false,
         unique: true,
-        comment: "UUID de la venta de un producto. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
+        comment: "UUID de la cupon de un producto. Se debe generar un UUID al momento de crear el registro. Se utiliza como mecánismo de seguridad para evitar que se adivine el ID de un registro y se acceda a información sensible"
     })
     uuid?: string;
-
-    @ApiProperty({
-        description: 'Identificador único de cada venta',
-        example: 1,
-        uniqueItems: true,
-    })
-    @Column({
-        type: 'bigint',
-        nullable: false,
-        name: 'id_venta',
-        comment: 'Identificador único de cada venta',
-        unsigned: true,
-    })
-    idVenta?: number;
 
     @ApiProperty({
         description: 'Cantidad de productos vendidos',
@@ -52,7 +38,7 @@ export class DetalleVentaEntity {
     cantidad!: number;
 
     @ApiProperty({
-        description: 'Costo del precio de venta',
+        description: 'Costo del precio de cupon',
         example: 1,
         required: true,
     })
@@ -91,10 +77,9 @@ export class DetalleVentaEntity {
     })
     @Column({
         type: "timestamp",
-        nullable: false,
+        nullable: true,
         name: "fecha_actualizacion",
         comment: "Fecha de actualización del registro. Se genera automáticamente al momento de actualizar el registro",
-        default: () => 'CURRENT_TIMESTAMP',
         onUpdate: 'CURRENT_TIMESTAMP',
     })
     fechaActualizacion?: Date;
@@ -122,7 +107,7 @@ export class DetalleVentaEntity {
     })
     estado?: number;
 
-    @OneToMany(() => VentaEntity, venta => venta.detalleVenta)
-    venta?: VentaEntity[];
-
+    @ManyToOne(() => VentaEntity, venta => venta.id, {eager: true, nullable: false})
+    @JoinColumn({name: 'id_venta'})
+    venta!: number | VentaEntity;
 }

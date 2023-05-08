@@ -15,7 +15,7 @@ import { ParametroEntity, ValorParametroEntity } from "../../frameworks/database
 import { CrearValorParametroDto } from "./dto/crear-valor_parametro.dto";
 import { ActualizarValorParametroDto } from "./dto/actualizar-valor_parametro.dto";
 import { PaginacionInterceptor } from "../../config/iterceptors/paginacion.interceptor";
-import { Auth } from "../usuario/decorators/auth.decorator";
+import { Auth } from "../../decorators/auth.decorator";
 
 @ApiTags("Valores Parámetros")
 @Controller('valor_parametro')
