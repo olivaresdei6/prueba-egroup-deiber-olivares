@@ -22,12 +22,14 @@ export class AuthUsuarioGuard implements CanActivate {
         console.log('Pase por el metodo', metodo);
         const ruta: string = this.obtenerLaRutaSolicitada(context);
         console.log('Pase por la ruta', ruta);
-        const [rolId, permisos, isTokenValido] = await Promise.all([
-            this.obtenerElUuidDelRol(usuario),
-            //@ts-ignore
-            this.obtenerPermisosDelUsuario(usuario.rol.id),
-            this.validarToken(token, usuario)
-        ]);
+        console.log('Usuario con su rol: ', usuario);
+        const rolId = await this.obtenerElUuidDelRol(usuario);
+        console.log('Pase por el rolId', rolId);
+        //@ts-ignore
+        const permisos = await this.obtenerPermisosDelUsuario(usuario.rol.id);
+        console.log('Pase por los permisos', permisos);
+        const isTokenValido = await this.validarToken(token, usuario);
+        console.log('Pase por el isTokenValido', isTokenValido);
         console.log('Pase por los permisos', permisos);
         console.log('Pase por el rolId', rolId);
         console.log('Pase por el isTokenValido', isTokenValido);
