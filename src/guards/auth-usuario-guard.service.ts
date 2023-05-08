@@ -36,7 +36,11 @@ export class AuthUsuarioGuard implements CanActivate {
 
         const request = context.switchToHttp().getRequest();
         console.log('Request: ', request.rawHeaders);
-        return request.rawHeaders[3].split(' ')[1] || request.rawHeaders[1].split(' ')[1];
+        for (let i = 0; i < request.rawHeaders.length; i++) {
+            if (request.rawHeaders[i] === 'Authorization') {
+                return request.rawHeaders[i + 1].split(' ')[1];
+            }
+        }
     }
 
     private obtenerElMetodoDeLaSolicitud(context: ExecutionContext): string {
