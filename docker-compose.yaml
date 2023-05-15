@@ -11,7 +11,7 @@ services:
             - /app/node_modules
         container_name: prueba_egroup
         ports:
-            - ${PORT_SERVER}:${PORT_SERVER}
+            - ${PORT}:${PORT}
         environment:
             APP_VERSION: ${APP_VERSION}
             STAGE: ${STAGE}
